@@ -24,19 +24,44 @@ class Level:
                     player = Player((x,y), self.display_surface)
                     self.player.add(player)
 
-    def player_move(self):
+    def horizontal_movement_collision(self):
         player = self.player.sprite
         player.rect.x += player.direction.x
+
+        for sprite in self.tiles.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x < 0 and player.side == 'left':
+                    player.rect.left = sprite.rect.right
+
+                elif player.direction.x > 0 and player.side == 'right':
+                    player.rect.right = sprite.rect.left
+
+    def vertical_movement_collision(self):
+        player = self.player.sprite
+        player.gravity()
+
+        for sprite in self.tiles.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.y > 0:
+                    player.rect.bottom = sprite.rect.top
+                    player.direction.y = 0
+                    player.on_ground = True
+                elif player.direction.y < 0:
+                    player.rect.top = sprite.rect.bottom
+                    player.direction.y = 0
+
+        if player.direction.y != 0:
+            player.on_ground = False
 
     def shift_x(self):
         player = self.player.sprite
         if player.rect.x >= (SCREEN_WIDTH/4) * 3 and player.side == 'right':
             self.shift_speed = -5
-            player.speed = 0
+            player.speed = 0.0000001
 
         elif player.rect.x <= SCREEN_WIDTH/4 and player.side == 'left':
             self.shift_speed = 5
-            player.speed = 0
+            player.speed = 0.00000001
 
         else:
             self.shift_speed = 0
@@ -53,6 +78,7 @@ class Level:
 
         # player
         self.player.update()
-        self.player_move()
+        self.horizontal_movement_collision()
+        self.vertical_movement_collision()
         self.player.draw(self.display_surface)
 

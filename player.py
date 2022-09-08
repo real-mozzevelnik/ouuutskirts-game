@@ -11,6 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5
         self.side = None
         self.gravity_speed = 0.8
+        self.on_ground = True
 
         # test visibility
         self.image = pygame.Surface((TILESIZE//2, TILESIZE))
@@ -33,7 +34,7 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
             self.side = None
 
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
 
     def gravity(self):
@@ -43,7 +44,5 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.direction.y = -20
 
-
     def update(self):
         self.input()
-        self.gravity()
