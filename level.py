@@ -24,6 +24,7 @@ class Level:
                     player = Player((x,y), self.display_surface)
                     self.player.add(player)
 
+    # I hate this method, that's insane
     def horizontal_movement_collision(self):
         player = self.player.sprite
         player.rect.x += player.direction.x
@@ -32,10 +33,29 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0 and player.side == 'left':
                     player.rect.left = sprite.rect.right
+                    if not player.on_ground and not player.in_air:
+                        player.on_wall = True
+                    else:
+                        player.on_wall = False
 
                 elif player.direction.x > 0 and player.side == 'right':
                     player.rect.right = sprite.rect.left
+                    if not player.on_ground and not player.in_air:
+                        player.on_wall = True
+                    else:
+                        player.on_wall = False
 
+                player.in_air = False
+
+            if player.on_ground:
+                player.on_wall = False
+                player.in_air = False
+
+            collide = pygame.sprite.spritecollideany(player, self.tiles)
+            if collide:
+                player.in_air = False
+
+    # I hate this method, that's insane
     def vertical_movement_collision(self):
         player = self.player.sprite
         player.gravity()
