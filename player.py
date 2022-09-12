@@ -2,7 +2,7 @@ import pygame
 from settings import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface):
+    def __init__(self, pos, display_surface, tiles):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -21,6 +21,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
         self.image.fill('red')
         self.direction = pygame.math.Vector2(0,0)
+
+        self.tiles = tiles
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -46,6 +48,7 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self):
         self.direction.y = self.jump_speed
+
 
     def if_in_air(self):
         if self.direction.y < 0:

@@ -1,4 +1,5 @@
 import pygame
+from enemy import Enemy, Stoper
 from settings import *
 from tile import Tile
 from player import Player
@@ -6,6 +7,12 @@ from player import Player
 class Level:
     def __init__(self, display_surface):
         self.display_surface = display_surface
+
+        # sprites
+        self.obstacle_sprites = pygame.sprite.Group()
+        self.visible_sprites = pygame.sprite.Group()
+        self.stoppers = pygame.sprite.Group()
+
         self.level_setup()
         self.shift_speed = 0
 
@@ -20,16 +27,25 @@ class Level:
                 if col == 'x':
                     tile = Tile((x,y), self.display_surface)
                     self.tiles.add(tile)
+                    self.visible_sprites.add(tile)
+                    self.obstacle_sprites.add(tile)
                 if col == 'p':
-                    player = Player((x,y), self.display_surface)
+                    player = Player((x,y), self.display_surface, self.tiles)
                     self.player.add(player)
+                if col == 'e':
+                    enemy = Enemy((x,y),self.display_surface, self.tiles)
+                    self.visible_sprites.add(enemy)
+                if col == 's':
+                    stopper = Stoper((x,y))
+                    self.visible_sprites.add(stopper)
+                    self.stoppers.add(stopper)
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
         player = self.player.sprite
         player.rect.x += player.direction.x
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.obstacle_sprites.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0 and player.side == 'left':
                     player.rect.left = sprite.rect.right
@@ -51,7 +67,7 @@ class Level:
                 player.on_wall = False
                 player.in_air = False
 
-            collide = pygame.sprite.spritecollideany(player, self.tiles)
+            collide = pygame.sprite.spritecollideany(player, self.obstacle_sprites)
             if collide:
                 player.in_air = False
 
@@ -60,7 +76,7 @@ class Level:
         player = self.player.sprite
         player.gravity()
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.obstacle_sprites.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
@@ -87,12 +103,11 @@ class Level:
             self.shift_speed = 0
             player.speed = 5
 
-
     def run(self):
 
         # tiles
-        self.tiles.update(self.shift_speed)
-        self.tiles.draw(self.display_surface)
+        self.visible_sprites.update(self.shift_speed)
+        self.visible_sprites.draw(self.display_surface)
         self.shift_x()
 
 
