@@ -16,10 +16,24 @@ class Player(pygame.sprite.Sprite):
         self.in_air = False
         self.jump_speed = -20
 
+        # animation
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.side = 'right'
+        self.running = False
+
+        self.player_running_animations = {
+            '0': pygame.image.load('0.png').convert_alpha(),
+            '1': pygame.image.load('1.png').convert_alpha(),
+            '2': pygame.image.load('2.png').convert_alpha(),
+            '3': pygame.image.load('3.png').convert_alpha(),
+            '4': pygame.image.load('4.png').convert_alpha()
+        }
+
         # test visibility
-        self.image = pygame.Surface((TILESIZE//2, TILESIZE))
+        self.image = self.player_running_animations['0']
         self.rect = self.image.get_rect(topleft = pos)
-        self.image.fill('red')
+        #self.image.fill('red')
         self.direction = pygame.math.Vector2(0,0)
 
         self.tiles = tiles
@@ -30,14 +44,16 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             self.direction.x = -self.speed
             self.side = 'left'
+            self.running = True
 
         elif keys[pygame.K_RIGHT]:
             self.direction.x = self.speed
             self.side = 'right'
+            self.running = True
 
         else:
             self.direction.x = 0
-            self.side = None
+            self.running = False
 
         if keys[pygame.K_SPACE] and (self.on_ground or self.on_wall):
             self.jump()
@@ -66,8 +82,30 @@ class Player(pygame.sprite.Sprite):
             self.gravity_speed = 0.8
             self.jump_speed = -20
 
+    def if_running(self):
+        if self.running and not self.on_wall and not self.in_air:
+            self.animate()
+        else:
+            if self.side == 'right':
+                self.image = self.player_running_animations['0']
+            else:
+                self.image = self.player_running_animations['0']
+                self.image = pygame.transform.flip(self.image, True, False)
+
+
+    def animate(self):
+        if self.side == 'right':
+            self.image = self.player_running_animations[str(int(self.frame_index))]
+        else:
+            self.image = self.player_running_animations[str(int(self.frame_index))]
+            self.image = pygame.transform.flip(self.image, True, False)
+        if self.frame_index >= 4.5:
+            self.frame_index = 0
+        self.frame_index += self.animation_speed
+
     def update(self):
         self.if_in_air()
         self.if_on_wall()
         self.slow_gravity_if_on_wall()
         self.input()
+        self.if_running()

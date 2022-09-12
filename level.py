@@ -100,11 +100,11 @@ class Level:
 
     def shift_x(self):
         player = self.player.sprite
-        if player.rect.x >= (SCREEN_WIDTH/4) * 3 and player.side == 'right':
+        if player.rect.x >= (SCREEN_WIDTH/4) * 3 and player.direction.x > 0:
             self.shift_speed = -5
             player.speed = 0.0000001
 
-        elif player.rect.x <= SCREEN_WIDTH/4 and player.side == 'left':
+        elif player.rect.x <= SCREEN_WIDTH/4 and player.direction.x < 0:
             self.shift_speed = 5
             player.speed = 0.00000001
 
