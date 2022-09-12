@@ -1,8 +1,9 @@
 import pygame
-from enemy import Enemy, Stoper
+from enemy import Enemy, Stopper
 from settings import *
 from tile import Tile
 from player import Player
+from weapon import Weapon
 
 class Level:
     def __init__(self, display_surface):
@@ -12,9 +13,16 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
         self.visible_sprites = pygame.sprite.Group()
         self.stoppers = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         self.level_setup()
         self.shift_speed = 0
+
+        # weapon
+        weapon = Weapon(self.player.sprite)
+        self.weapon = pygame.sprite.GroupSingle()
+        self.weapon.add(weapon)
+
 
     def level_setup(self):
         self.tiles = pygame.sprite.Group()
@@ -35,8 +43,9 @@ class Level:
                 if col == 'e':
                     enemy = Enemy((x,y),self.display_surface, self.tiles)
                     self.visible_sprites.add(enemy)
+                    self.enemies.add(enemy)
                 if col == 's':
-                    stopper = Stoper((x,y))
+                    stopper = Stopper((x,y))
                     self.visible_sprites.add(stopper)
                     self.stoppers.add(stopper)
 
@@ -103,6 +112,11 @@ class Level:
             self.shift_speed = 0
             player.speed = 5
 
+    def change_enemy_side(self):
+        for enemy in self.enemies.sprites():
+            if pygame.sprite.spritecollideany(enemy, self.stoppers):
+                enemy.speed = -enemy.speed
+
     def run(self):
 
         # tiles
@@ -117,3 +131,9 @@ class Level:
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
 
+        # enemies
+        self.change_enemy_side()
+
+        # weapon
+        self.weapon.update()
+        self.weapon.draw(self.display_surface)
