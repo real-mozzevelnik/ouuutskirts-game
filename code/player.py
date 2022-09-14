@@ -23,12 +23,13 @@ class Player(pygame.sprite.Sprite):
         self.running = False
 
         self.player_running_animations = {
-            '0': pygame.image.load('0.png').convert_alpha(),
-            '1': pygame.image.load('1.png').convert_alpha(),
-            '2': pygame.image.load('2.png').convert_alpha(),
-            '3': pygame.image.load('3.png').convert_alpha(),
-            '4': pygame.image.load('4.png').convert_alpha()
-        }
+            '0': pygame.image.load('../graphics/player/running/0.png').convert_alpha(),
+            '1': pygame.image.load('../graphics/player/running/1.png').convert_alpha(),
+            '2': pygame.image.load('../graphics/player/running/2.png').convert_alpha(),
+            '3': pygame.image.load('../graphics/player/running/3.png').convert_alpha(),
+            '4': pygame.image.load('../graphics/player/running/4.png').convert_alpha()}
+        self.player_on_wall_animation = pygame.image.load('../graphics/player/on_wall/0.png').convert_alpha()
+        self.player_jumping_animation = pygame.image.load('../graphics/player/jump/0.png').convert_alpha()
 
         # test visibility
         self.image = self.player_running_animations['0']
@@ -65,7 +66,6 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.direction.y = self.jump_speed
 
-
     def if_in_air(self):
         if self.direction.y < 0:
             self.in_air = True
@@ -82,18 +82,32 @@ class Player(pygame.sprite.Sprite):
             self.gravity_speed = 0.8
             self.jump_speed = -20
 
-    def if_running(self):
+    def animate_all(self):
         if self.running and not self.on_wall and not self.in_air:
-            self.animate()
-        else:
+            self.animate_run()
+
+        elif self.on_wall and not self.on_ground and not self.in_air:
+            if self.side == 'right':
+                self.image = self.player_on_wall_animation
+                self.image = pygame.transform.flip(self.image, True, False)
+            else:
+                self.image = self.player_on_wall_animation
+
+        elif self.in_air:
+            if self.side == 'right':
+                self.image = self.player_jumping_animation
+            else:
+                self.image = self.player_jumping_animation
+                self.image = pygame.transform.flip(self.image, True, False)
+
+        elif not self.running and not self.on_wall and not self.in_air:
             if self.side == 'right':
                 self.image = self.player_running_animations['0']
             else:
                 self.image = self.player_running_animations['0']
                 self.image = pygame.transform.flip(self.image, True, False)
 
-
-    def animate(self):
+    def animate_run(self):
         if self.side == 'right':
             self.image = self.player_running_animations[str(int(self.frame_index))]
         else:
@@ -108,4 +122,4 @@ class Player(pygame.sprite.Sprite):
         self.if_on_wall()
         self.slow_gravity_if_on_wall()
         self.input()
-        self.if_running()
+        self.animate_all()

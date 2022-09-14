@@ -4,6 +4,7 @@ from settings import *
 from tile import Tile
 from player import Player
 from weapon import Weapon
+from support import import_csv_layout
 
 class Level:
     def __init__(self, display_surface):
@@ -22,6 +23,8 @@ class Level:
         weapon = Weapon(self.player.sprite)
         self.weapon = pygame.sprite.GroupSingle()
         self.weapon.add(weapon)
+
+        import_csv_layout('../level/level_1_csv/background_1.csv')
 
 
     def level_setup(self):
@@ -48,6 +51,52 @@ class Level:
                     stopper = Stopper((x,y))
                     self.visible_sprites.add(stopper)
                     self.stoppers.add(stopper)
+
+    '''def create_map(self):
+        layouts = {
+            'background_1': import_csv_layout('../level/level_1_csv/background_1.csv'),
+            'background_2': import_csv_layout('../level/level_1_csv/background_2.csv'),
+            'background_3': import_csv_layout('../level/level_1_csv/background_3.csv'),
+            'background_4': import_csv_layout('../level/level_1_csv/background_4.csv'),
+            'background_5': import_csv_layout('../level/level_1_csv/background_5.csv'),
+            'door': import_csv_layout('../level/level_1_csv/door.csv'),
+            'coins': import_csv_layout('../level/level_1_csv/coins.csv'),
+            'enemies': import_csv_layout('../level/level_1_csv/obstacles.csv')
+        }
+
+        images = 
+
+        for style, layout in layouts.items():
+            for row_index, row in enumerate(layout):
+                for col_index, col in enumerate(row):
+                    if col != '-1':
+                        x = col_index * TILESIZE
+                        y = row_index * TILESIZE
+                        if style == 'background_1':
+                            Tile((x, y), image)
+                        if style == 'grass':
+                            random_grass_image = choice(graphics['grass'])
+                            Tile((x, y), [self.obstacle_sprites, self.visible_sprites, self.attackable_sprites],
+                                 'grass', random_grass_image)
+                        if style == 'object':
+                            surf = graphics['objects'][int(col)]
+                            Tile((x, y), [self.obstacle_sprites, self.visible_sprites], 'object', surf)
+                        if style == 'entities':
+                            if col == '394':
+                                self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites,
+                                                     self.create_attack, self.destroy_attack, self.create_magic)
+                            else:
+                                if col == '390':
+                                    monster_name = 'bamboo'
+                                elif col == '391':
+                                    monster_name = 'spirit'
+                                elif col == '392':
+                                    monster_name = 'raccoon'
+                                else:
+                                    monster_name = 'squid'
+                                Enemy(monster_name, (x, y), [self.visible_sprites, self.attackable_sprites],
+                                      self.obstacle_sprites, self.damage_player, self.trigger_death_particles,
+                                      self.add_exp)'''
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):

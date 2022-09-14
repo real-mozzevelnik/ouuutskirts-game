@@ -22,7 +22,7 @@ class Enemy(pygame.sprite.Sprite):
 class Stopper(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.image.load('stopper.png').convert_alpha()
+        self.image = pygame.image.load('../graphics/stopper.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
 
     def update(self, shift_speed):
