@@ -52,19 +52,25 @@ class Level:
                     self.visible_sprites.add(stopper)
                     self.stoppers.add(stopper)
 
-    '''def create_map(self):
+    def create_map(self):
         layouts = {
             'background_1': import_csv_layout('../level/level_1_csv/background_1.csv'),
             'background_2': import_csv_layout('../level/level_1_csv/background_2.csv'),
             'background_3': import_csv_layout('../level/level_1_csv/background_3.csv'),
             'background_4': import_csv_layout('../level/level_1_csv/background_4.csv'),
             'background_5': import_csv_layout('../level/level_1_csv/background_5.csv'),
+            'obstacles': import_csv_layout('../level/level_1_csv/obstacles.csv'),
             'door': import_csv_layout('../level/level_1_csv/door.csv'),
             'coins': import_csv_layout('../level/level_1_csv/coins.csv'),
-            'enemies': import_csv_layout('../level/level_1_csv/obstacles.csv')
-        }
+            'enemies': import_csv_layout('../level/level_1_csv/enemies.csv'),
+            'stoppers': import_csv_layout('../level/level_1_csv/stoppers.csv')}
 
-        images = 
+        coin_image = pygame.image.load('../graphics/tiles/coin.png').convert_alpha()
+        enemy_image = pygame.image.load('../graphics/tiles/Spooky ghost 1.png').convert_alpha()
+        box_image = pygame.image.load('../graphics/tiles/crate.png').convert_alpha()
+        obstacles = {'0': pygame.image.load('..').convert_alpha()
+
+        }
 
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
@@ -96,7 +102,7 @@ class Level:
                                     monster_name = 'squid'
                                 Enemy(monster_name, (x, y), [self.visible_sprites, self.attackable_sprites],
                                       self.obstacle_sprites, self.damage_player, self.trigger_death_particles,
-                                      self.add_exp)'''
+                                      self.add_exp)
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):

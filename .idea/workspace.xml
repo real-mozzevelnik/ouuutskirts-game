@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82f414f2-edd0-475b-99f0-14cd30b0e177" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/code/support.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/my_game.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/my_game.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/enemy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/level.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/level.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/0.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/tiles/Trash Monster-Sheet.png" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/tiles/Trash Monster-Sheet.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1/безымянный.tmx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/безымянный.tmx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/obstacles.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/obstacles.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
