@@ -17,7 +17,6 @@ while True:
 
     screen.fill('green')
     level.run()
-
     pygame.display.update()
     clock.tick(60)
 

@@ -2,7 +2,7 @@ import pygame
 from settings import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, tiles):
+    def __init__(self, pos, display_surface):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -34,10 +34,7 @@ class Player(pygame.sprite.Sprite):
         # test visibility
         self.image = self.player_running_animations['0']
         self.rect = self.image.get_rect(topleft = pos)
-        #self.image.fill('red')
         self.direction = pygame.math.Vector2(0,0)
-
-        self.tiles = tiles
 
     def input(self):
         keys = pygame.key.get_pressed()

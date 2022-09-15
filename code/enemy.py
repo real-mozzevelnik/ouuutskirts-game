@@ -2,11 +2,11 @@ import pygame
 from settings import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, tiles):
+    def __init__(self, pos, display_surface, image):
         super().__init__()
-        self.image = pygame.Surface((TILESIZE//2, TILESIZE))
+        self.image = image
+        self.image = pygame.transform.scale(self.image, (64,64))
         self.rect = self.image.get_rect(topleft = pos)
-        self.image.fill('white')
         self.direction = pygame.math.Vector2(0,0)
 
         self.speed = -2
@@ -18,12 +18,3 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, shift_speed):
         self.rect.x += shift_speed
         self.move()
-
-class Stopper(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        super().__init__()
-        self.image = pygame.image.load('../graphics/stopper.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
-
-    def update(self, shift_speed):
-        self.rect.x += shift_speed

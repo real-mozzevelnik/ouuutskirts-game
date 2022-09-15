@@ -1,22 +1,24 @@
 import pygame
-from enemy import Enemy, Stopper
+from enemy import Enemy
 from settings import *
 from tile import Tile
 from player import Player
 from weapon import Weapon
-from support import import_csv_layout
+from support import import_csv_layout, import_cut_graphics
 
 class Level:
     def __init__(self, display_surface):
         self.display_surface = display_surface
+        self.door = None
 
         # sprites
         self.obstacle_sprites = pygame.sprite.Group()
         self.visible_sprites = pygame.sprite.Group()
         self.stoppers = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+        self.player = pygame.sprite.GroupSingle()
 
-        self.level_setup()
+        self.create_map()
         self.shift_speed = 0
 
         # weapon
@@ -24,53 +26,22 @@ class Level:
         self.weapon = pygame.sprite.GroupSingle()
         self.weapon.add(weapon)
 
-        import_csv_layout('../level/level_1_csv/background_1.csv')
-
-
-    def level_setup(self):
-        self.tiles = pygame.sprite.Group()
-        self.player = pygame.sprite.GroupSingle()
-
-        for ceil_index, ceil in enumerate(test_level):
-            for col_index, col in enumerate(ceil):
-                x = col_index * TILESIZE
-                y = ceil_index * TILESIZE
-                if col == 'x':
-                    tile = Tile((x,y), self.display_surface)
-                    self.tiles.add(tile)
-                    self.visible_sprites.add(tile)
-                    self.obstacle_sprites.add(tile)
-                if col == 'p':
-                    player = Player((x,y), self.display_surface, self.tiles)
-                    self.player.add(player)
-                if col == 'e':
-                    enemy = Enemy((x,y),self.display_surface, self.tiles)
-                    self.visible_sprites.add(enemy)
-                    self.enemies.add(enemy)
-                if col == 's':
-                    stopper = Stopper((x,y))
-                    self.visible_sprites.add(stopper)
-                    self.stoppers.add(stopper)
-
     def create_map(self):
         layouts = {
-            'background_1': import_csv_layout('../level/level_1_csv/background_1.csv'),
-            'background_2': import_csv_layout('../level/level_1_csv/background_2.csv'),
-            'background_3': import_csv_layout('../level/level_1_csv/background_3.csv'),
-            'background_4': import_csv_layout('../level/level_1_csv/background_4.csv'),
-            'background_5': import_csv_layout('../level/level_1_csv/background_5.csv'),
             'obstacles': import_csv_layout('../level/level_1_csv/obstacles.csv'),
+            'box': import_csv_layout('../level/level_1_csv/box.csv'),
             'door': import_csv_layout('../level/level_1_csv/door.csv'),
             'coins': import_csv_layout('../level/level_1_csv/coins.csv'),
             'enemies': import_csv_layout('../level/level_1_csv/enemies.csv'),
-            'stoppers': import_csv_layout('../level/level_1_csv/stoppers.csv')}
+            'stoppers': import_csv_layout('../level/level_1_csv/stoppers.csv'),
+            'player': import_csv_layout('../level/level_1_csv/player.csv')}
 
         coin_image = pygame.image.load('../graphics/tiles/coin.png').convert_alpha()
         enemy_image = pygame.image.load('../graphics/tiles/Spooky ghost 1.png').convert_alpha()
         box_image = pygame.image.load('../graphics/tiles/crate.png').convert_alpha()
-        obstacles = {'0': pygame.image.load('..').convert_alpha()
-
-        }
+        obstacles = import_cut_graphics('../graphics/tiles/terrain_tiles.png')
+        door_image = import_cut_graphics('../graphics/tiles/door.png', 46)
+        stopper_image = pygame.image.load('../graphics/stopper.png').convert_alpha()
 
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
@@ -78,31 +49,33 @@ class Level:
                     if col != '-1':
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE
-                        if style == 'background_1':
-                            Tile((x, y), image)
-                        if style == 'grass':
-                            random_grass_image = choice(graphics['grass'])
-                            Tile((x, y), [self.obstacle_sprites, self.visible_sprites, self.attackable_sprites],
-                                 'grass', random_grass_image)
-                        if style == 'object':
-                            surf = graphics['objects'][int(col)]
-                            Tile((x, y), [self.obstacle_sprites, self.visible_sprites], 'object', surf)
-                        if style == 'entities':
-                            if col == '394':
-                                self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites,
-                                                     self.create_attack, self.destroy_attack, self.create_magic)
-                            else:
-                                if col == '390':
-                                    monster_name = 'bamboo'
-                                elif col == '391':
-                                    monster_name = 'spirit'
-                                elif col == '392':
-                                    monster_name = 'raccoon'
-                                else:
-                                    monster_name = 'squid'
-                                Enemy(monster_name, (x, y), [self.visible_sprites, self.attackable_sprites],
-                                      self.obstacle_sprites, self.damage_player, self.trigger_death_particles,
-                                      self.add_exp)
+                        if style == 'obstacles':
+                            tile = Tile((x,y), self.display_surface, obstacles[int(col)])
+                            self.obstacle_sprites.add(tile)
+                            self.visible_sprites.add(tile)
+                        if style == 'box':
+                            tile = Tile((x,y), self.display_surface, box_image)
+                            self.obstacle_sprites.add(tile)
+                            self.visible_sprites.add(tile)
+                        if style == 'door':
+                            self.door = Tile((x,y), self.display_surface, door_image[0])
+                            self.visible_sprites.add(self.door)
+                        if style == 'coins':
+                            tile = Tile((x,y), self.display_surface, coin_image)
+                            self.visible_sprites.add(tile)
+                        if style == 'enemies':
+                            enemy = Enemy((x,y), self.display_surface, enemy_image)
+                            self.enemies.add(enemy)
+                            self.visible_sprites.add(enemy)
+                        if style == 'stoppers':
+                            tile = Tile((x,y), self.display_surface, stopper_image)
+                            self.stoppers.add(tile)
+                            self.visible_sprites.add(tile)
+                        if style == 'player':
+                            player = Player((x,y),self.display_surface)
+                            self.player.add(player)
+
+
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
