@@ -2,7 +2,7 @@ import pygame
 from settings import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface):
+    def __init__(self, pos, display_surface, create_attack):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.on_wall = False
         self.in_air = False
         self.jump_speed = -20
+        self.health = 100
 
         # animation
         self.frame_index = 0
@@ -31,10 +32,17 @@ class Player(pygame.sprite.Sprite):
         self.player_on_wall_animation = pygame.image.load('../graphics/player/on_wall/0.png').convert_alpha()
         self.player_jumping_animation = pygame.image.load('../graphics/player/jump/0.png').convert_alpha()
 
-        # test visibility
+        # basic setup
         self.image = self.player_running_animations['0']
         self.rect = self.image.get_rect(topleft = pos)
         self.direction = pygame.math.Vector2(0,0)
+
+        self.create_attack = create_attack
+
+        # cooldowns
+        self.can_attack = False
+        self.attack_cooldown = 400
+        self.attack_time = 0
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -55,6 +63,10 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_SPACE] and (self.on_ground or self.on_wall):
             self.jump()
+        elif keys[pygame.K_c] and self.can_attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.create_attack()
+            self.can_attack = False
 
     def gravity(self):
         self.direction.y += self.gravity_speed
@@ -114,9 +126,17 @@ class Player(pygame.sprite.Sprite):
             self.frame_index = 0
         self.frame_index += self.animation_speed
 
+    def cooldowns(self):
+        current_time = pygame.time.get_ticks()
+
+        if not self.can_attack:
+            if current_time - self.attack_time >= self.attack_cooldown + 200:
+                self.can_attack = True
+
     def update(self):
         self.if_in_air()
         self.if_on_wall()
         self.slow_gravity_if_on_wall()
         self.input()
         self.animate_all()
+        self.cooldowns()

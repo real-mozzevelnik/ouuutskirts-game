@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
         self.direction = pygame.math.Vector2(0,0)
 
-        self.speed = -2
+        self.speed = 2
 
     def move(self):
         self.direction.x = self.speed

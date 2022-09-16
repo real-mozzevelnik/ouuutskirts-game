@@ -9,31 +9,7 @@
       <change beforePath="$PROJECT_DIR$/code/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/support.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/support.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/tile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/tiles/Trash Monster-Sheet.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1/безымянный.tmx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/безымянный.tmx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/background_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/background_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/background_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_4.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/background_4.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_5.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/background_5.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/box.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/box.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/coins.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/coins.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/door.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/door.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/obstacles.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/obstacles.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/stoppers.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/stoppers.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_background_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_background_2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_background_3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_background_4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_background_5.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_box.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_coins.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_door.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_enemies.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_obstacles.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_player.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/level/level_1_csv/безымянный_stoppers.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/weapon.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

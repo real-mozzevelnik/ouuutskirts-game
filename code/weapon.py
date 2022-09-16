@@ -6,11 +6,20 @@ class Weapon(pygame.sprite.Sprite):
         super().__init__()
         self.player = player
 
-        self.image = pygame.Surface((TILESIZE, TILESIZE//4))
-        self.rect = self.image.get_rect(topleft=(self.player.rect.x+32, self.player.rect.y//2))
-        self.image.fill('blue')
+        self.image = pygame.image.load('../graphics/weapon/rythm.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (64,32))
+        self.right_image = self.image
+        self.left_image = pygame.transform.flip(self.image, True, False)
+        self.rect = self.image.get_rect(topleft=(self.player.rect.x+10, self.player.rect.y+15))
         self.direction = pygame.math.Vector2(0, 0)
 
     def update(self):
-        self.rect.x = self.player.rect.x+32
-        self.rect.y = self.player.rect.y + TILESIZE//2
+        if self.player.side == 'right':
+            self.image = self.right_image
+            self.rect.x = self.player.rect.x+10
+            self.rect.y = self.player.rect.y + 15
+        elif self.player.side == 'left':
+            self.image = self.left_image
+            self.rect.x = self.player.rect.x-40
+            self.rect.y = self.player.rect.y + 15
+

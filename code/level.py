@@ -4,12 +4,11 @@ from settings import *
 from tile import Tile
 from player import Player
 from weapon import Weapon
-from support import import_csv_layout, import_cut_graphics
+from support import import_csv_layout, import_cut_graphics, import_folder
 
 class Level:
     def __init__(self, display_surface):
         self.display_surface = display_surface
-        self.door = None
 
         # sprites
         self.obstacle_sprites = pygame.sprite.Group()
@@ -25,6 +24,10 @@ class Level:
         weapon = Weapon(self.player.sprite)
         self.weapon = pygame.sprite.GroupSingle()
         self.weapon.add(weapon)
+        self.player_attack_animation = import_folder('../graphics/particles/slash')
+
+        # animations
+        self.animation_speed = 0.15
 
     def create_map(self):
         layouts = {
@@ -42,6 +45,11 @@ class Level:
         obstacles = import_cut_graphics('../graphics/tiles/terrain_tiles.png')
         door_image = import_cut_graphics('../graphics/tiles/door.png', 46)
         stopper_image = pygame.image.load('../graphics/stopper.png').convert_alpha()
+        background_image = pygame.image.load('../graphics/tiles/background.png').convert_alpha()
+
+        # background
+        background = Tile((0,0),self.display_surface, background_image, 'background')
+        self.visible_sprites.add(background)
 
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
@@ -50,29 +58,31 @@ class Level:
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE
                         if style == 'obstacles':
-                            tile = Tile((x,y), self.display_surface, obstacles[int(col)])
+                            tile = Tile((x,y), self.display_surface, obstacles[int(col)], 'obstacle')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'box':
-                            tile = Tile((x,y), self.display_surface, box_image)
+                            y += 25
+                            tile = Tile((x,y), self.display_surface, box_image, 'box')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'door':
-                            self.door = Tile((x,y), self.display_surface, door_image[0])
+                            y += 21
+                            self.door = Tile((x,y), self.display_surface, door_image[0], 'door')
                             self.visible_sprites.add(self.door)
                         if style == 'coins':
-                            tile = Tile((x,y), self.display_surface, coin_image)
+                            tile = Tile((x,y), self.display_surface, coin_image, 'coin')
                             self.visible_sprites.add(tile)
                         if style == 'enemies':
                             enemy = Enemy((x,y), self.display_surface, enemy_image)
                             self.enemies.add(enemy)
                             self.visible_sprites.add(enemy)
                         if style == 'stoppers':
-                            tile = Tile((x,y), self.display_surface, stopper_image)
+                            tile = Tile((x,y), self.display_surface, stopper_image, 'stopper')
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'player':
-                            player = Player((x,y),self.display_surface)
+                            player = Player((x,y),self.display_surface, self.create_attack)
                             self.player.add(player)
 
 
@@ -84,14 +94,14 @@ class Level:
 
         for sprite in self.obstacle_sprites.sprites():
             if sprite.rect.colliderect(player.rect):
-                if player.direction.x < 0 and player.side == 'left':
+                if player.direction.x < 0:
                     player.rect.left = sprite.rect.right
                     if not player.on_ground and not player.in_air:
                         player.on_wall = True
                     else:
                         player.on_wall = False
 
-                elif player.direction.x > 0 and player.side == 'right':
+                elif player.direction.x > 0:
                     player.rect.right = sprite.rect.left
                     if not player.on_ground and not player.in_air:
                         player.on_wall = True
@@ -102,10 +112,6 @@ class Level:
 
             if player.on_ground:
                 player.on_wall = False
-                player.in_air = False
-
-            collide = pygame.sprite.spritecollideany(player, self.obstacle_sprites)
-            if collide:
                 player.in_air = False
 
     # I hate this method, that's insane
@@ -144,12 +150,37 @@ class Level:
         for enemy in self.enemies.sprites():
             if pygame.sprite.spritecollideany(enemy, self.stoppers):
                 enemy.speed = -enemy.speed
+                enemy.image = pygame.transform.flip(enemy.image, True, False)
+
+    def damage_player(self):
+        player = self.player.sprite
+        if pygame.sprite.spritecollideany(player, self.enemies):
+            player.health -= 15
+            print(player.health)
+
+    def create_attack(self):
+        for enemy in self.enemies:
+            if -100<=self.player.sprite.rect.x - enemy.rect.x<=100 and -30<=self.player.sprite.rect.y - enemy.rect.y<=30:
+                self.run_player_attack_animation(enemy)
+
+    def run_player_attack_animation(self, enemy):
+        tile = Tile((enemy.rect.x, enemy.rect.y), self.display_surface, self.player_attack_animation[0], 'player_attack')
+        self.visible_sprites.add(tile)
+        frame_index = 0
+        while True:
+            if frame_index <= 3.5:
+                frame_index += self.animation_speed
+                tile.image = self.player_attack_animation[int(frame_index)]
+            else:
+                tile.kill()
+                break
 
     def run(self):
 
         # tiles
-        self.visible_sprites.update(self.shift_speed)
         self.visible_sprites.draw(self.display_surface)
+        self.visible_sprites.update(self.shift_speed)
+
         self.shift_x()
 
 
@@ -158,10 +189,12 @@ class Level:
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
+        self.damage_player()
 
         # enemies
         self.change_enemy_side()
 
         # weapon
         self.weapon.update()
-        self.weapon.draw(self.display_surface)
+        if not self.player.sprite.on_wall:
+            self.weapon.draw(self.display_surface)
