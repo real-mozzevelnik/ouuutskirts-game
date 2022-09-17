@@ -7,6 +7,7 @@ from weapon import Weapon
 from support import import_csv_layout, import_cut_graphics, import_folder
 from particles import AnimationPlayer
 import random
+from ui import UI
 
 class Level:
     def __init__(self, display_surface):
@@ -18,6 +19,7 @@ class Level:
         self.stoppers = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
+        self.ui = pygame.sprite.GroupSingle()
 
         self.create_map()
         self.shift_speed = 0
@@ -30,6 +32,10 @@ class Level:
         # animations
         self.animation_speed = 0.15
         self.animation_player = AnimationPlayer()
+
+        # ui
+        self.ui_menu = UI(self.player.sprite.health, self.display_surface)
+        self.ui.add(self.ui_menu)
 
     def create_map(self):
         layouts = {
@@ -90,10 +96,8 @@ class Level:
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'player':
-                            player = Player((x,y),self.display_surface, self.create_attack)
+                            player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites)
                             self.player.add(player)
-
-
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
@@ -174,9 +178,12 @@ class Level:
 
     def create_attack(self):
         for enemy in self.enemies:
-            if -200<=self.player.sprite.rect.x - enemy.rect.x<=200 and -64<=self.player.sprite.rect.y - enemy.rect.y<=64:
+            if 0 <= self.player.sprite.rect.x - enemy.rect.x <= 150 and -64 <= self.player.sprite.rect.y - enemy.rect.y <= 64\
+                    and self.player.sprite.side == 'left'or -150 <= self.player.sprite.rect.x - enemy.rect.x <= 0\
+                    and -64 <= self.player.sprite.rect.y - enemy.rect.y <= 64 and self.player.sprite.side == 'right':
                 enemy.health -= 20
-                self.animation_player.create_particles('slash',(enemy.rect.centerx,enemy.rect.centery), self.visible_sprites)
+                enemy.can_be_attacked = False
+                enemy.attacked_time = pygame.time.get_ticks()
 
     def dont_go_out_of_screen(self):
         player = self.player.sprite
@@ -188,7 +195,6 @@ class Level:
 
         if player.rect.x <= SCREEN_WIDTH/4:
             player.rect.x = SCREEN_WIDTH/4
-
 
     def run(self):
 
@@ -214,3 +220,7 @@ class Level:
         self.weapon.update()
         if not self.player.sprite.on_wall:
             self.weapon.draw(self.display_surface)
+
+        # ui
+        self.ui.draw(self.display_surface)
+        self.ui.update(self.player.sprite.health)

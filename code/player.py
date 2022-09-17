@@ -1,8 +1,9 @@
 import pygame
 from math import sin
+from particles import AnimationPlayer
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, create_attack):
+    def __init__(self, pos, display_surface, create_attack, visible_sprites):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -22,6 +23,7 @@ class Player(pygame.sprite.Sprite):
         self.animation_speed = 0.15
         self.side = 'right'
         self.running = False
+        self.animation_player = AnimationPlayer()
 
         self.player_running_animations = {
             '0': pygame.image.load('../graphics/player/running/0.png').convert_alpha(),
@@ -38,6 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(0,0)
 
         self.create_attack = create_attack
+        self.visible_sprites = visible_sprites
 
         # cooldowns
         self.can_attack = True
@@ -72,6 +75,12 @@ class Player(pygame.sprite.Sprite):
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
             self.can_attack = False
+            if self.side == 'right':
+                self.animation_player.create_particles('attack_right', (self.rect.x + 98, self.rect.y + 32)
+                                                       , self.visible_sprites, player_attack=True, player_rect = self.rect, player_side='right')
+            else:
+                self.animation_player.create_particles('attack_left', (self.rect.x - 66, self.rect.y + 32)
+                                                       ,self.visible_sprites, player_attack=True, player_rect = self.rect, player_side='left')
 
     def gravity(self):
         self.direction.y += self.gravity_speed

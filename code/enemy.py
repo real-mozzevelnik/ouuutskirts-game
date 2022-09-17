@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from math import sin
 from particles import AnimationPlayer
 
 class Enemy(pygame.sprite.Sprite):
@@ -28,6 +28,10 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_player = AnimationPlayer()
         self.visible_sprites = visible_sprites
 
+        self.can_be_attacked = True
+        self.can_be_attacked_cooldown = 400
+        self.attacked_time = 0
+
     def move(self):
         self.direction.x = self.speed
         self.rect.x += self.direction.x
@@ -47,8 +51,30 @@ class Enemy(pygame.sprite.Sprite):
             self.frame_index = 0
         self.frame_index += self.animation_speed
 
+        if not self.can_be_attacked:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+    @staticmethod
+    def wave_value():
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else:
+            return 0
+
+    def cooldowns(self):
+        current_time = pygame.time.get_ticks()
+
+        if not self.can_be_attacked:
+            if current_time - self.attacked_time >= self.can_be_attacked_cooldown + 200:
+                self.can_be_attacked = True
+
     def update(self, shift_speed):
         self.rect.x += shift_speed
         self.move()
         self.check_death()
         self.animate()
+        self.cooldowns()
