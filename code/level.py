@@ -5,6 +5,8 @@ from tile import Tile
 from player import Player
 from weapon import Weapon
 from support import import_csv_layout, import_cut_graphics, import_folder
+from particles import AnimationPlayer
+import random
 
 class Level:
     def __init__(self, display_surface):
@@ -24,10 +26,10 @@ class Level:
         weapon = Weapon(self.player.sprite)
         self.weapon = pygame.sprite.GroupSingle()
         self.weapon.add(weapon)
-        self.player_attack_animation = import_folder('../graphics/particles/slash')
 
         # animations
         self.animation_speed = 0.15
+        self.animation_player = AnimationPlayer()
 
     def create_map(self):
         layouts = {
@@ -40,12 +42,17 @@ class Level:
             'player': import_csv_layout('../level/level_1_csv/player.csv')}
 
         coin_image = pygame.image.load('../graphics/tiles/coin.png').convert_alpha()
-        enemy_image = pygame.image.load('../graphics/tiles/Spooky ghost 1.png').convert_alpha()
         box_image = pygame.image.load('../graphics/tiles/crate.png').convert_alpha()
         obstacles = import_cut_graphics('../graphics/tiles/terrain_tiles.png')
         door_image = import_cut_graphics('../graphics/tiles/door.png', 46)
         stopper_image = pygame.image.load('../graphics/stopper.png').convert_alpha()
         background_image = pygame.image.load('../graphics/tiles/background.png').convert_alpha()
+
+        # enemies
+        self.enemy_images = {
+            'ghost': import_folder('../graphics/enemies/ghost'),
+            'lich': import_folder('../graphics/enemies/lich')
+        }
 
         # background
         background = Tile((0,0),self.display_surface, background_image, 'background')
@@ -74,7 +81,8 @@ class Level:
                             tile = Tile((x,y), self.display_surface, coin_image, 'coin')
                             self.visible_sprites.add(tile)
                         if style == 'enemies':
-                            enemy = Enemy((x,y), self.display_surface, enemy_image)
+                            enemy_type = random.choice(list(self.enemy_images.keys()))
+                            enemy = Enemy((x,y), self.display_surface, self.enemy_images[enemy_type], enemy_type, self.visible_sprites)
                             self.enemies.add(enemy)
                             self.visible_sprites.add(enemy)
                         if style == 'stoppers':
@@ -149,31 +157,38 @@ class Level:
     def change_enemy_side(self):
         for enemy in self.enemies.sprites():
             if pygame.sprite.spritecollideany(enemy, self.stoppers):
+                if enemy.speed > 0:
+                    enemy.side = 'left'
+                else:
+                    enemy.side = 'right'
                 enemy.speed = -enemy.speed
-                enemy.image = pygame.transform.flip(enemy.image, True, False)
 
     def damage_player(self):
         player = self.player.sprite
-        if pygame.sprite.spritecollideany(player, self.enemies):
+        if pygame.sprite.spritecollideany(player, self.enemies) and player.can_be_attacked:
+            player.can_be_attacked = False
+            player.attacked_time = pygame.time.get_ticks()
             player.health -= 15
+            self.animation_player.create_particles('slash', (player.rect.centerx, player.rect.centery),self.visible_sprites)
             print(player.health)
 
     def create_attack(self):
         for enemy in self.enemies:
-            if -100<=self.player.sprite.rect.x - enemy.rect.x<=100 and -30<=self.player.sprite.rect.y - enemy.rect.y<=30:
-                self.run_player_attack_animation(enemy)
+            if -200<=self.player.sprite.rect.x - enemy.rect.x<=200 and -64<=self.player.sprite.rect.y - enemy.rect.y<=64:
+                enemy.health -= 20
+                self.animation_player.create_particles('slash',(enemy.rect.centerx,enemy.rect.centery), self.visible_sprites)
 
-    def run_player_attack_animation(self, enemy):
-        tile = Tile((enemy.rect.x, enemy.rect.y), self.display_surface, self.player_attack_animation[0], 'player_attack')
-        self.visible_sprites.add(tile)
-        frame_index = 0
-        while True:
-            if frame_index <= 3.5:
-                frame_index += self.animation_speed
-                tile.image = self.player_attack_animation[int(frame_index)]
-            else:
-                tile.kill()
-                break
+    def dont_go_out_of_screen(self):
+        player = self.player.sprite
+        if player.rect.y <= -10:
+            player.rect.y = -9
+
+        if player.rect.x >= (SCREEN_WIDTH/4) * 3:
+            player.rect.x = (SCREEN_WIDTH/4) * 3
+
+        if player.rect.x <= SCREEN_WIDTH/4:
+            player.rect.x = SCREEN_WIDTH/4
+
 
     def run(self):
 
@@ -190,6 +205,7 @@ class Level:
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
         self.damage_player()
+        self.dont_go_out_of_screen()
 
         # enemies
         self.change_enemy_side()

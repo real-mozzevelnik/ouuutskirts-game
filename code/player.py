@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from math import sin
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, display_surface, create_attack):
@@ -40,9 +40,13 @@ class Player(pygame.sprite.Sprite):
         self.create_attack = create_attack
 
         # cooldowns
-        self.can_attack = False
+        self.can_attack = True
         self.attack_cooldown = 400
         self.attack_time = 0
+
+        self.can_be_attacked = True
+        self.can_be_attacked_cooldown = 400
+        self.attacked_time = 0
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -63,6 +67,7 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_SPACE] and (self.on_ground or self.on_wall):
             self.jump()
+
         elif keys[pygame.K_c] and self.can_attack:
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
@@ -116,6 +121,12 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.player_running_animations['0']
                 self.image = pygame.transform.flip(self.image, True, False)
 
+        if not self.can_be_attacked:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
     def animate_run(self):
         if self.side == 'right':
             self.image = self.player_running_animations[str(int(self.frame_index))]
@@ -132,6 +143,18 @@ class Player(pygame.sprite.Sprite):
         if not self.can_attack:
             if current_time - self.attack_time >= self.attack_cooldown + 200:
                 self.can_attack = True
+
+        if not self.can_be_attacked:
+            if current_time - self.attacked_time >= self.can_be_attacked_cooldown + 400:
+                self.can_be_attacked = True
+
+    @staticmethod
+    def wave_value():
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else:
+            return 0
 
     def update(self):
         self.if_in_air()
