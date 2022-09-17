@@ -8,6 +8,7 @@ from support import import_csv_layout, import_cut_graphics, import_folder
 from particles import AnimationPlayer
 import random
 from ui import UI
+from file_path import res
 
 class Level:
     def __init__(self, display_surface):
@@ -20,6 +21,9 @@ class Level:
         self.enemies = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.ui = pygame.sprite.GroupSingle()
+        self.grass = pygame.sprite.Group()
+        self.coins = pygame.sprite.Group()
+        self.coins_score = 0
 
         self.create_map()
         self.shift_speed = 0
@@ -39,25 +43,27 @@ class Level:
 
     def create_map(self):
         layouts = {
-            'obstacles': import_csv_layout('../level/level_1_csv/obstacles.csv'),
-            'box': import_csv_layout('../level/level_1_csv/box.csv'),
-            'door': import_csv_layout('../level/level_1_csv/door.csv'),
-            'coins': import_csv_layout('../level/level_1_csv/coins.csv'),
-            'enemies': import_csv_layout('../level/level_1_csv/enemies.csv'),
-            'stoppers': import_csv_layout('../level/level_1_csv/stoppers.csv'),
-            'player': import_csv_layout('../level/level_1_csv/player.csv')}
+            'terrain': import_csv_layout(res('../level/level_1_csv/terrain.csv')),
+            'box': import_csv_layout(res('../level/level_1_csv/box.csv')),
+            'door': import_csv_layout(res('../level/level_1_csv/door.csv')),
+            'coins': import_csv_layout(res('../level/level_1_csv/coins.csv')),
+            'enemies': import_csv_layout(res('../level/level_1_csv/enemies.csv')),
+            'stoppers': import_csv_layout(res('../level/level_1_csv/stoppers.csv')),
+            'player': import_csv_layout(res('../level/level_1_csv/player.csv')),
+            'grass': import_csv_layout(res('../level/level_1_csv/grass.csv'))}
 
-        coin_image = pygame.image.load('../graphics/tiles/coin.png').convert_alpha()
-        box_image = pygame.image.load('../graphics/tiles/crate.png').convert_alpha()
-        obstacles = import_cut_graphics('../graphics/tiles/terrain_tiles.png')
-        door_image = import_cut_graphics('../graphics/tiles/door.png', 46)
-        stopper_image = pygame.image.load('../graphics/stopper.png').convert_alpha()
-        background_image = pygame.image.load('../graphics/tiles/background.png').convert_alpha()
+        coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
+        box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
+        obstacles = import_cut_graphics(res('../graphics/tiles/terrain_tiles.png'))
+        door_image = import_cut_graphics(res('../graphics/tiles/door.png'), 46)
+        stopper_image = pygame.image.load(res('../graphics/stopper.png')).convert_alpha()
+        background_image = pygame.image.load(res('../graphics/tiles/background.png')).convert_alpha()
+        grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))
 
         # enemies
         self.enemy_images = {
-            'ghost': import_folder('../graphics/enemies/ghost'),
-            'lich': import_folder('../graphics/enemies/lich')
+            'ghost': import_folder(res('../graphics/enemies/ghost')),
+            'lich': import_folder(res('../graphics/enemies/lich'))
         }
 
         # background
@@ -70,8 +76,8 @@ class Level:
                     if col != '-1':
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE
-                        if style == 'obstacles':
-                            tile = Tile((x,y), self.display_surface, obstacles[int(col)], 'obstacle')
+                        if style == 'terrain':
+                            tile = Tile((x,y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'box':
@@ -86,6 +92,7 @@ class Level:
                         if style == 'coins':
                             tile = Tile((x,y), self.display_surface, coin_image, 'coin')
                             self.visible_sprites.add(tile)
+                            self.coins.add(tile)
                         if style == 'enemies':
                             enemy_type = random.choice(list(self.enemy_images.keys()))
                             enemy = Enemy((x,y), self.display_surface, self.enemy_images[enemy_type], enemy_type, self.visible_sprites)
@@ -98,6 +105,10 @@ class Level:
                         if style == 'player':
                             player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites)
                             self.player.add(player)
+                        if style == 'grass':
+                            tile = Tile((x,y), self.display_surface, grass_image[0], 'grass')
+                            self.visible_sprites.add(tile)
+                            self.grass.add(tile)
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
@@ -108,14 +119,14 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0:
                     player.rect.left = sprite.rect.right
-                    if not player.on_ground and not player.in_air:
+                    if not player.on_ground and not player.in_air and not pygame.sprite.spritecollideany(player,self.grass):
                         player.on_wall = True
                     else:
                         player.on_wall = False
 
                 elif player.direction.x > 0:
                     player.rect.right = sprite.rect.left
-                    if not player.on_ground and not player.in_air:
+                    if not player.on_ground and not player.in_air and not pygame.sprite.spritecollideany(player,self.grass):
                         player.on_wall = True
                     else:
                         player.on_wall = False
@@ -174,7 +185,6 @@ class Level:
             player.attacked_time = pygame.time.get_ticks()
             player.health -= 15
             self.animation_player.create_particles('slash', (player.rect.centerx, player.rect.centery),self.visible_sprites)
-            print(player.health)
 
     def create_attack(self):
         for enemy in self.enemies:
@@ -195,6 +205,12 @@ class Level:
 
         if player.rect.x <= SCREEN_WIDTH/4:
             player.rect.x = SCREEN_WIDTH/4
+
+    def get_coins(self):
+        for coin in self.coins.sprites():
+            if coin.rect.colliderect(self.player.sprite.rect):
+                self.coins_score += 1
+                coin.kill()
 
     def run(self):
 
@@ -224,3 +240,4 @@ class Level:
         # ui
         self.ui.draw(self.display_surface)
         self.ui.update(self.player.sprite.health)
+        self.get_coins()

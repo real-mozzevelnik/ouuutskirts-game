@@ -2,13 +2,41 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82f414f2-edd0-475b-99f0-14cd30b0e177" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/code/ui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/file_path.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/tiles/grass.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/level/level_1/grass.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/level/level_1/stopper.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/level/level_1_csv/grass.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/level/level_1_csv/terrain.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/enemy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/level.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/level.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/particles.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/particles.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/tiles/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/tiles/background.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1/безымянный.tmx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/безымянный.tmx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/background_5.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/box.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/box.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/coins.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/coins.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/door.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/door.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/enemies.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/obstacles.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/player.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/player.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_csv/stoppers.csv" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_csv/stoppers.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/Trash Monster-Sheet.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/background.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1_tilesets/terrain.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/box.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/box.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/coin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/coin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/door.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/door.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/ghost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/enemy.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/player.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/player.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/stoppers.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/level/level_1_tilesets/terrain_tiles.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/level/level_1/terrain_tiles.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,13 +61,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Desktop/progs/python_projects/my_game/code/main.py&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/User/Desktop/progs/python_projects/my_game/code/main.py",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python">
       <module name="my_game" />

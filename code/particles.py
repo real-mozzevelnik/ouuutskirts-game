@@ -1,16 +1,17 @@
 import pygame
 from support import import_folder
 from random import choice
+from file_path import res
 
 class AnimationPlayer:
     def __init__(self):
         self.frames = {
             # player attack
-            'slash': import_folder('../graphics/particles/slash'),
-            'ghost_death': import_folder('../graphics/particles/ghost_death'),
-            'lich_death': import_folder('../graphics/particles/lich_death'),
-            'attack_right': import_folder('../graphics/particles/level1_attack'),
-            'attack_left': import_folder('../graphics/particles/level1_attack')
+            'slash': import_folder(res('../graphics/particles/slash')),
+            'ghost_death': import_folder(res('../graphics/particles/ghost_death')),
+            'lich_death': import_folder(res('../graphics/particles/lich_death')),
+            'attack_right': import_folder(res('../graphics/particles/level1_attack')),
+            'attack_left': import_folder(res('../graphics/particles/level1_attack'))
             }
 
         for index, frame in enumerate(self.frames['ghost_death']):

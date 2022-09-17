@@ -1,6 +1,7 @@
 import pygame
 from math import sin
 from particles import AnimationPlayer
+from file_path import res
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, display_surface, create_attack, visible_sprites):
@@ -26,13 +27,13 @@ class Player(pygame.sprite.Sprite):
         self.animation_player = AnimationPlayer()
 
         self.player_running_animations = {
-            '0': pygame.image.load('../graphics/player/running/0.png').convert_alpha(),
-            '1': pygame.image.load('../graphics/player/running/1.png').convert_alpha(),
-            '2': pygame.image.load('../graphics/player/running/2.png').convert_alpha(),
-            '3': pygame.image.load('../graphics/player/running/3.png').convert_alpha(),
-            '4': pygame.image.load('../graphics/player/running/4.png').convert_alpha()}
-        self.player_on_wall_animation = pygame.image.load('../graphics/player/on_wall/0.png').convert_alpha()
-        self.player_jumping_animation = pygame.image.load('../graphics/player/jump/0.png').convert_alpha()
+            '0': pygame.image.load(res('../graphics/player/running/0.png')).convert_alpha(),
+            '1': pygame.image.load(res('../graphics/player/running/1.png')).convert_alpha(),
+            '2': pygame.image.load(res('../graphics/player/running/2.png')).convert_alpha(),
+            '3': pygame.image.load(res('../graphics/player/running/3.png')).convert_alpha(),
+            '4': pygame.image.load(res('../graphics/player/running/4.png')).convert_alpha()}
+        self.player_on_wall_animation = pygame.image.load(res('../graphics/player/on_wall/0.png')).convert_alpha()
+        self.player_jumping_animation = pygame.image.load(res('../graphics/player/jump/0.png')).convert_alpha()
 
         # basic setup
         self.image = self.player_running_animations['0']
