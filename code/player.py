@@ -4,7 +4,7 @@ from particles import AnimationPlayer
 from file_path import res
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, create_attack, visible_sprites):
+    def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -18,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.in_air = False
         self.jump_speed = -20
         self.health = 100
+        self.ultra = 0
+        self.ultra_max = 10
 
         # animation
         self.frame_index = 0
@@ -42,6 +44,7 @@ class Player(pygame.sprite.Sprite):
 
         self.create_attack = create_attack
         self.visible_sprites = visible_sprites
+        self.play_ultra = play_ultra
 
         # cooldowns
         self.can_attack = True
@@ -82,6 +85,11 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.animation_player.create_particles('attack_left', (self.rect.x - 66, self.rect.y + 32)
                                                        ,self.visible_sprites, player_attack=True, player_rect = self.rect, player_side='left')
+
+        elif keys[pygame.K_LCTRL]:
+            if self.ultra == self.ultra_max:
+                self.play_ultra()
+                self.ultra = 0
 
     def gravity(self):
         self.direction.y += self.gravity_speed

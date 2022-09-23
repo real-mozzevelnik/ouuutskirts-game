@@ -38,7 +38,7 @@ class Level:
         self.animation_player = AnimationPlayer()
 
         # ui
-        self.ui_menu = UI(self.player.sprite.health, self.display_surface)
+        self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
         self.ui.add(self.ui_menu)
 
     def create_map(self):
@@ -103,7 +103,7 @@ class Level:
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'player':
-                            player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites)
+                            player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites, self.play_ultra)
                             self.player.add(player)
                         if style == 'grass':
                             tile = Tile((x,y), self.display_surface, grass_image[0], 'grass')
@@ -207,10 +207,20 @@ class Level:
             player.rect.x = SCREEN_WIDTH/4
 
     def get_coins(self):
+        player = self.player.sprite
         for coin in self.coins.sprites():
-            if coin.rect.colliderect(self.player.sprite.rect):
+            if coin.rect.colliderect(player.rect):
                 self.coins_score += 1
                 coin.kill()
+                if player.ultra<player.ultra_max:
+                    player.ultra+=1
+
+    def play_ultra(self):
+        for sprite in self.enemies.sprites():
+            if 0<=sprite.rect.x<=SCREEN_WIDTH and 0<=sprite.rect.y<=SCREEN_HEIGHT:
+                sprite.health -= 80
+                self.animation_player.create_particles('ultra',(sprite.rect.centerx, sprite.rect.centery), self.visible_sprites)
+
 
     def run(self):
 

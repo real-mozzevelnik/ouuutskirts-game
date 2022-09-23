@@ -11,7 +11,8 @@ class AnimationPlayer:
             'ghost_death': import_folder(res('../graphics/particles/ghost_death')),
             'lich_death': import_folder(res('../graphics/particles/lich_death')),
             'attack_right': import_folder(res('../graphics/particles/level1_attack')),
-            'attack_left': import_folder(res('../graphics/particles/level1_attack'))
+            'attack_left': import_folder(res('../graphics/particles/level1_attack')),
+            'ultra': import_folder(res('../graphics/particles/flame'))
             }
 
         for index, frame in enumerate(self.frames['ghost_death']):
