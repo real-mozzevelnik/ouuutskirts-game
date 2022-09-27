@@ -4,7 +4,7 @@ from particles import AnimationPlayer
 from file_path import res
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra):
+    def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra, desrtoy_boxes):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -45,6 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.create_attack = create_attack
         self.visible_sprites = visible_sprites
         self.play_ultra = play_ultra
+        self.destroy_boxes = desrtoy_boxes
 
         # cooldowns
         self.can_attack = True
@@ -78,6 +79,7 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_c] and self.can_attack:
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
+            self.destroy_boxes()
             self.can_attack = False
             if self.side == 'right':
                 self.animation_player.create_particles('attack_right', (self.rect.x + 98, self.rect.y + 32)

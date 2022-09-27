@@ -9,6 +9,7 @@ from particles import AnimationPlayer
 import random
 from ui import UI
 from file_path import res
+from heart import Heart
 
 class Level:
     def __init__(self, display_surface):
@@ -23,6 +24,8 @@ class Level:
         self.ui = pygame.sprite.GroupSingle()
         self.grass = pygame.sprite.Group()
         self.coins = pygame.sprite.Group()
+        self.boxes = pygame.sprite.Group()
+        self.hearts = pygame.sprite.Group()
         self.coins_score = 0
 
         self.create_map()
@@ -85,6 +88,7 @@ class Level:
                             tile = Tile((x,y), self.display_surface, box_image, 'box')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
+                            self.boxes.add(tile)
                         if style == 'door':
                             y += 21
                             self.door = Tile((x,y), self.display_surface, door_image[0], 'door')
@@ -103,7 +107,8 @@ class Level:
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'player':
-                            player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites, self.play_ultra)
+                            player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites,
+                                            self.play_ultra, self.destroy_boxes)
                             self.player.add(player)
                         if style == 'grass':
                             tile = Tile((x,y), self.display_surface, grass_image[0], 'grass')
@@ -188,12 +193,22 @@ class Level:
 
     def create_attack(self):
         for enemy in self.enemies:
-            if 0 <= self.player.sprite.rect.x - enemy.rect.x <= 150 and -64 <= self.player.sprite.rect.y - enemy.rect.y <= 64\
-                    and self.player.sprite.side == 'left'or -150 <= self.player.sprite.rect.x - enemy.rect.x <= 0\
+            if 0 <= self.player.sprite.rect.x - enemy.rect.x <= 200 and -64 <= self.player.sprite.rect.y - enemy.rect.y <= 64\
+                    and self.player.sprite.side == 'left'or -200 <= self.player.sprite.rect.x - enemy.rect.x <= 0\
                     and -64 <= self.player.sprite.rect.y - enemy.rect.y <= 64 and self.player.sprite.side == 'right':
                 enemy.health -= 20
                 enemy.can_be_attacked = False
                 enemy.attacked_time = pygame.time.get_ticks()
+
+    def destroy_boxes(self):
+        for box in self.boxes.sprites():
+            if 0 <= self.player.sprite.rect.x - box.rect.x <= 150 and -64 <= self.player.sprite.rect.y - box.rect.y <= 64 \
+                    and self.player.sprite.side == 'left' or -150 <= self.player.sprite.rect.x - box.rect.x <= 0 \
+                    and -64 <= self.player.sprite.rect.y - box.rect.y <= 64 and self.player.sprite.side == 'right':
+                box.kill()
+                heart = Heart((box.rect.x,box.rect.y), self.display_surface)
+                self.hearts.add(heart)
+                self.visible_sprites.add(heart)
 
     def dont_go_out_of_screen(self):
         player = self.player.sprite
@@ -220,6 +235,16 @@ class Level:
             if 0<=sprite.rect.x<=SCREEN_WIDTH and 0<=sprite.rect.y<=SCREEN_HEIGHT:
                 sprite.health -= 80
                 self.animation_player.create_particles('ultra',(sprite.rect.centerx, sprite.rect.centery), self.visible_sprites)
+
+    def add_hearts(self):
+        player = self.player.sprite
+        for heart in self.hearts.sprites():
+            if player.rect.colliderect(heart.rect):
+                heart.kill()
+                player.health+=30
+                if player.health > 100:
+                    player.health = 100
+
 
 
     def run(self):
@@ -250,4 +275,7 @@ class Level:
         # ui
         self.ui.draw(self.display_surface)
         self.ui.update(self.player.sprite.health)
+
+        # interactions
         self.get_coins()
+        self.add_hearts()
