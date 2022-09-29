@@ -10,6 +10,7 @@ import random
 from ui import UI
 from file_path import res
 from heart import Heart
+from dialog import Dialog
 
 class Level:
     def __init__(self, display_surface):
@@ -26,6 +27,7 @@ class Level:
         self.coins = pygame.sprite.Group()
         self.boxes = pygame.sprite.Group()
         self.hearts = pygame.sprite.Group()
+        self.dialog = pygame.sprite.GroupSingle()
         self.coins_score = 0
 
         self.create_map()
@@ -43,6 +45,10 @@ class Level:
         # ui
         self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
         self.ui.add(self.ui_menu)
+
+
+        dialog = Dialog(0,dialogs['level_1'],self.display_surface)
+        self.dialog.add(dialog)
 
     def create_map(self):
         layouts = {
@@ -279,3 +285,5 @@ class Level:
         # interactions
         self.get_coins()
         self.add_hearts()
+        self.dialog.draw(self.display_surface)
+        self.dialog.update()

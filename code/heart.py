@@ -16,7 +16,7 @@ class Heart(pygame.sprite.Sprite):
         print(self.all_images)
 
     def animate(self):
-        if self.frame_index >= len(self.all_images)-3:
+        if self.frame_index >= len(self.all_images)-2:
             self.frame_index = 0
         self.image = self.all_images[int(self.frame_index)]
         self.frame_index += self.animation_speed

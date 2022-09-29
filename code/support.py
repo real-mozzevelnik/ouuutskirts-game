@@ -37,3 +37,8 @@ def import_folder(path):
             surface_list.append(image_surf)
 
     return  surface_list
+
+def print_text(pos, message, font_size, display):
+    FONT = pygame.font.Font('../graphics/tiles/Kurland.ttf', font_size)
+    text = FONT.render(message, False, 'white')
+    display.blit(text, pos)
