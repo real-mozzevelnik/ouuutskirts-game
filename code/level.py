@@ -11,6 +11,7 @@ from ui import UI
 from file_path import res
 from heart import Heart
 from dialog import Dialog
+from coin import Coin
 
 class Level:
     def __init__(self, display_surface):
@@ -28,7 +29,9 @@ class Level:
         self.boxes = pygame.sprite.Group()
         self.hearts = pygame.sprite.Group()
         self.dialog = pygame.sprite.GroupSingle()
+        self.dialog_place = pygame.sprite.GroupSingle()
         self.coins_score = 0
+        self.paused = False
 
         self.create_map()
         self.shift_speed = 0
@@ -46,10 +49,6 @@ class Level:
         self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
         self.ui.add(self.ui_menu)
 
-
-        dialog = Dialog(0,dialogs['level_1'],self.display_surface)
-        self.dialog.add(dialog)
-
     def create_map(self):
         layouts = {
             'terrain': import_csv_layout(res('../level/level_1_csv/terrain.csv')),
@@ -59,7 +58,8 @@ class Level:
             'enemies': import_csv_layout(res('../level/level_1_csv/enemies.csv')),
             'stoppers': import_csv_layout(res('../level/level_1_csv/stoppers.csv')),
             'player': import_csv_layout(res('../level/level_1_csv/player.csv')),
-            'grass': import_csv_layout(res('../level/level_1_csv/grass.csv'))}
+            'grass': import_csv_layout(res('../level/level_1_csv/grass.csv')),
+            'dialog': import_csv_layout(res('../level/level_1_csv/dialog.csv'))}
 
         coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
@@ -100,7 +100,8 @@ class Level:
                             self.door = Tile((x,y), self.display_surface, door_image[0], 'door')
                             self.visible_sprites.add(self.door)
                         if style == 'coins':
-                            tile = Tile((x,y), self.display_surface, coin_image, 'coin')
+                            # tile = Tile((x,y), self.display_surface, coin_image, 'coin')
+                            tile = Coin((x,y),self.display_surface)
                             self.visible_sprites.add(tile)
                             self.coins.add(tile)
                         if style == 'enemies':
@@ -109,7 +110,7 @@ class Level:
                             self.enemies.add(enemy)
                             self.visible_sprites.add(enemy)
                         if style == 'stoppers':
-                            tile = Tile((x,y), self.display_surface, stopper_image, 'stopper')
+                            tile = Tile((x, y), self.display_surface, stopper_image, 'stopper')
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
                         if style == 'player':
@@ -120,6 +121,10 @@ class Level:
                             tile = Tile((x,y), self.display_surface, grass_image[0], 'grass')
                             self.visible_sprites.add(tile)
                             self.grass.add(tile)
+                        if style == 'dialog':
+                            tile = Tile((x,y), self.display_surface, stopper_image, 'dialog')
+                            self.dialog_place.add(tile)
+                            self.visible_sprites.add(tile)
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
@@ -251,21 +256,35 @@ class Level:
                 if player.health > 100:
                     player.health = 100
 
+    def start_dialog(self):
+        if self.dialog_place.sprite:
+            if self.player.sprite.rect.x == self.dialog_place.sprite.rect.x:
+                dialog = Dialog(dialogs['level_1'], self.display_surface, self.dialog_place)
+                self.dialog.add(dialog)
+
+    def if_paused(self):
+        if self.dialog.sprite:
+            self.paused = True
+        else:
+            self.paused = False
+
 
 
     def run(self):
 
         # tiles
         self.visible_sprites.draw(self.display_surface)
-        self.visible_sprites.update(self.shift_speed)
+        if not self.paused:
+            self.visible_sprites.update(self.shift_speed)
 
         self.shift_x()
 
 
         # player
-        self.player.update()
-        self.horizontal_movement_collision()
-        self.vertical_movement_collision()
+        if not self.paused:
+            self.player.update()
+            self.horizontal_movement_collision()
+            self.vertical_movement_collision()
         self.player.draw(self.display_surface)
         self.damage_player()
         self.dont_go_out_of_screen()
@@ -274,7 +293,8 @@ class Level:
         self.change_enemy_side()
 
         # weapon
-        self.weapon.update()
+        if not self.paused:
+            self.weapon.update()
         if not self.player.sprite.on_wall:
             self.weapon.draw(self.display_surface)
 
@@ -285,5 +305,8 @@ class Level:
         # interactions
         self.get_coins()
         self.add_hearts()
-        self.dialog.draw(self.display_surface)
-        self.dialog.update()
+        self.start_dialog()
+        self.if_paused()
+        if self.dialog:
+            self.dialog.draw(self.display_surface)
+            self.dialog.update()

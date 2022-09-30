@@ -2,6 +2,7 @@ from csv import reader
 import pygame
 from settings import *
 from os import walk
+from file_path import res
 
 def import_csv_layout(path):
     terrain_map = []
@@ -39,6 +40,6 @@ def import_folder(path):
     return  surface_list
 
 def print_text(pos, message, font_size, display):
-    FONT = pygame.font.Font('../graphics/tiles/Kurland.ttf', font_size)
+    FONT = pygame.font.Font(res('../graphics/tiles/Kurland.ttf'), font_size)
     text = FONT.render(message, False, 'white')
     display.blit(text, pos)

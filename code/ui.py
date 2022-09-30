@@ -14,5 +14,5 @@ class UI(pygame.sprite.Sprite):
     def update(self, player_health):
         self.health_bar_rect.width = player_health*1.55
         pygame.draw.rect(self.display_surface, 'red', self.health_bar_rect)
-        pygame.draw.circle(self.display_surface, 'gold', (60, 120), 4 * self.player.ultra)
-        pygame.draw.circle(self.display_surface, 'black', (60, 120), 40, 3)
+        pygame.draw.circle(self.display_surface, 'gold', (60, 650), 4 * self.player.ultra)
+        pygame.draw.circle(self.display_surface, 'black', (60, 650), 40, 3)
