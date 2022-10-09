@@ -14,8 +14,11 @@ from dialog import Dialog
 from coin import Coin
 
 class Level:
-    def __init__(self, display_surface):
+    def __init__(self, display_surface, stat):
         self.display_surface = display_surface
+
+        # stats
+        self.stat = stat
 
         # sprites
         self.obstacle_sprites = pygame.sprite.Group()
@@ -51,23 +54,26 @@ class Level:
 
     def create_map(self):
         layouts = {
-            'terrain': import_csv_layout(res('../level/level_1_csv/terrain.csv')),
-            'box': import_csv_layout(res('../level/level_1_csv/box.csv')),
-            'door': import_csv_layout(res('../level/level_1_csv/door.csv')),
-            'coins': import_csv_layout(res('../level/level_1_csv/coins.csv')),
-            'enemies': import_csv_layout(res('../level/level_1_csv/enemies.csv')),
-            'stoppers': import_csv_layout(res('../level/level_1_csv/stoppers.csv')),
-            'player': import_csv_layout(res('../level/level_1_csv/player.csv')),
-            'grass': import_csv_layout(res('../level/level_1_csv/grass.csv')),
-            'dialog': import_csv_layout(res('../level/level_1_csv/dialog.csv'))}
+            'terrain': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/terrain.csv')),
+            'box': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/box.csv')),
+            'door': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/door.csv')),
+            'coins': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/coins.csv')),
+            'enemies': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/enemies.csv')),
+            'stoppers': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/stoppers.csv')),
+            'player': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/player.csv')),
+            'grass': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/grass.csv')),
+            'dialog': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/dialog.csv'))}
 
         coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
-        obstacles = import_cut_graphics(res('../graphics/tiles/terrain_tiles.png'))
+        obstacles = import_cut_graphics(res(f'../graphics/tiles/terrain_tiles/{self.stat.level_num}.png'))
         door_image = import_cut_graphics(res('../graphics/tiles/door.png'), 46)
         stopper_image = pygame.image.load(res('../graphics/stopper.png')).convert_alpha()
-        background_image = pygame.image.load(res('../graphics/tiles/background.png')).convert_alpha()
-        grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))
+        background_image = pygame.image.load(res(f'../graphics/background/{self.stat.level_num}.png')).convert_alpha()
+        if self.stat.level_num == 'level_1':
+            grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))[0]
+        else:
+            grass_image = stopper_image
 
         # enemies
         self.enemy_images = {
@@ -118,7 +124,7 @@ class Level:
                                             self.play_ultra, self.destroy_boxes)
                             self.player.add(player)
                         if style == 'grass':
-                            tile = Tile((x,y), self.display_surface, grass_image[0], 'grass')
+                            tile = Tile((x,y), self.display_surface, grass_image, 'grass')
                             self.visible_sprites.add(tile)
                             self.grass.add(tile)
                         if style == 'dialog':
@@ -268,7 +274,14 @@ class Level:
         else:
             self.paused = False
 
+    def collide_door(self):
+        if self.player.sprite.rect.x+35 == self.door.rect.x:
+            self.stat.level_num = self.stat.level_num[:-1] + str(int(self.stat.level_num[-1])+1)
+            self.stat.stat_now = 'new_level'
 
+    def death(self):
+        if self.player.sprite.health<=0 or self.player.sprite.rect.y>SCREEN_HEIGHT:
+            self.stat.stat_now = 'death'
 
     def run(self):
 
@@ -288,6 +301,7 @@ class Level:
         self.player.draw(self.display_surface)
         self.damage_player()
         self.dont_go_out_of_screen()
+        self.death()
 
         # enemies
         self.change_enemy_side()
@@ -310,3 +324,5 @@ class Level:
         if self.dialog:
             self.dialog.draw(self.display_surface)
             self.dialog.update()
+
+        self.collide_door()

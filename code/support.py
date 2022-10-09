@@ -39,7 +39,7 @@ def import_folder(path):
 
     return  surface_list
 
-def print_text(pos, message, font_size, display):
+def print_text(pos, message, font_size, display, color = 'white'):
     FONT = pygame.font.Font(res('../graphics/tiles/Kurland.ttf'), font_size)
-    text = FONT.render(message, False, 'white')
+    text = FONT.render(message, False, color)
     display.blit(text, pos)

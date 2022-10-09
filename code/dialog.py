@@ -11,13 +11,11 @@ class Dialog(pygame.sprite.Sprite):
         self.image = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT/3))
         self.image.set_alpha(200)
         self.rect = self.image.get_rect(topleft = (0, (SCREEN_HEIGHT*2)/3))
-        self.exist = True
 
     def input(self):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_RETURN]:
-            self.exist = False
             self.dialog_place.sprite.kill()
             self.kill()
 
