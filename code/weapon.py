@@ -2,11 +2,14 @@ import pygame
 from file_path import res
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, player):
+    def __init__(self, player, stat):
         super().__init__()
         self.player = player
 
-        self.image = pygame.image.load(res('../graphics/weapon/rythm.png')).convert_alpha()
+        # game stat
+        self.stat = stat
+
+        self.image = pygame.image.load(res(f'../graphics/weapon/{self.stat.level_num}.png')).convert_alpha()
         self.image = pygame.transform.scale(self.image, (64,32))
         self.right_image = self.image
         self.left_image = pygame.transform.flip(self.image, True, False)

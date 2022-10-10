@@ -4,7 +4,7 @@ from particles import AnimationPlayer
 from file_path import res
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra, desrtoy_boxes):
+    def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra, desrtoy_boxes, stat):
         super().__init__()
         self.pos = pos
         self.display_surface = display_surface
@@ -21,6 +21,9 @@ class Player(pygame.sprite.Sprite):
         self.ultra = 0
         self.ultra_max = 10
 
+        # game stat
+        self.stat = stat
+
         # animation
         self.frame_index = 0
         self.animation_speed = 0.15
@@ -29,13 +32,13 @@ class Player(pygame.sprite.Sprite):
         self.animation_player = AnimationPlayer()
 
         self.player_running_animations = {
-            '0': pygame.image.load(res('../graphics/player/running/0.png')).convert_alpha(),
-            '1': pygame.image.load(res('../graphics/player/running/1.png')).convert_alpha(),
-            '2': pygame.image.load(res('../graphics/player/running/2.png')).convert_alpha(),
-            '3': pygame.image.load(res('../graphics/player/running/3.png')).convert_alpha(),
-            '4': pygame.image.load(res('../graphics/player/running/4.png')).convert_alpha()}
-        self.player_on_wall_animation = pygame.image.load(res('../graphics/player/on_wall/0.png')).convert_alpha()
-        self.player_jumping_animation = pygame.image.load(res('../graphics/player/jump/0.png')).convert_alpha()
+            '0': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/0.png')).convert_alpha(),
+            '1': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/1.png')).convert_alpha(),
+            '2': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/2.png')).convert_alpha(),
+            '3': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/3.png')).convert_alpha(),
+            '4': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/4.png')).convert_alpha()}
+        self.player_on_wall_animation = pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/on_wall/0.png')).convert_alpha()
+        self.player_jumping_animation = pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/jump/0.png')).convert_alpha()
 
         # basic setup
         self.image = self.player_running_animations['0']

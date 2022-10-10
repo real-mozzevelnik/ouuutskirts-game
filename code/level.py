@@ -40,7 +40,7 @@ class Level:
         self.shift_speed = 0
 
         # weapon
-        weapon = Weapon(self.player.sprite)
+        weapon = Weapon(self.player.sprite, self.stat)
         self.weapon = pygame.sprite.GroupSingle()
         self.weapon.add(weapon)
 
@@ -62,7 +62,8 @@ class Level:
             'stoppers': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/stoppers.csv')),
             'player': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/player.csv')),
             'grass': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/grass.csv')),
-            'dialog': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/dialog.csv'))}
+            'dialog': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/dialog.csv')),
+            'beauty':import_csv_layout(res(f'../level/{self.stat.level_num}_csv/beauty.csv')) if self.stat.level_num=='level_2' else [[-1]]}
 
         coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
@@ -106,7 +107,6 @@ class Level:
                             self.door = Tile((x,y), self.display_surface, door_image[0], 'door')
                             self.visible_sprites.add(self.door)
                         if style == 'coins':
-                            # tile = Tile((x,y), self.display_surface, coin_image, 'coin')
                             tile = Coin((x,y),self.display_surface)
                             self.visible_sprites.add(tile)
                             self.coins.add(tile)
@@ -121,7 +121,7 @@ class Level:
                             self.visible_sprites.add(tile)
                         if style == 'player':
                             player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites,
-                                            self.play_ultra, self.destroy_boxes)
+                                            self.play_ultra, self.destroy_boxes, self.stat)
                             self.player.add(player)
                         if style == 'grass':
                             tile = Tile((x,y), self.display_surface, grass_image, 'grass')
@@ -130,6 +130,9 @@ class Level:
                         if style == 'dialog':
                             tile = Tile((x,y), self.display_surface, stopper_image, 'dialog')
                             self.dialog_place.add(tile)
+                            self.visible_sprites.add(tile)
+                        if style == 'beauty':
+                            tile = Tile((x, y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.visible_sprites.add(tile)
 
     # I hate this method, that's insane
