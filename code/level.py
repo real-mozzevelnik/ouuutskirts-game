@@ -12,7 +12,6 @@ from file_path import res
 from heart import Heart
 from dialog import Dialog
 from coin import Coin
-from next_level_mate import Next_level_mate
 
 class Level:
     def __init__(self, display_surface, stat):
@@ -135,7 +134,7 @@ class Level:
                             self.visible_sprites.add(tile)
                             self.grass.add(tile)
                         elif style == 'dialog':
-                            tile = Tile((x,y), self.display_surface, box_image, 'dialog')
+                            tile = Tile((x,y), self.display_surface, stopper_image, 'dialog')
                             self.dialogs.add(tile)
                             self.visible_sprites.add(tile)
                         elif style == 'beauty':
@@ -294,8 +293,8 @@ class Level:
             self.paused = False
 
     def collide_mate(self):
-        if abs(self.player.sprite.rect.x - self.next_level_mate.sprite.rect.x) < 20:
-            self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate, self.stat, go_next=True))
+        if abs(self.player.sprite.rect.x - self.next_level_mate.sprite.rect.x) < 64:
+            self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate.sprite, self.stat, go_next=True))
 
 
     def death(self):
@@ -308,7 +307,6 @@ class Level:
         self.visible_sprites.draw(self.display_surface)
         if not self.paused:
             self.visible_sprites.update(self.shift_speed)
-            # self.dialogs.update(self.shift_speed)
 
         self.shift_x()
 

@@ -53,7 +53,7 @@ class Game:
             self.check_stat()
             pygame.display.update()
             self.clock.tick(60)
-            # print(self.stat.dialog_num)
+            # print(self.stat.level_num)
 
 if __name__=='__main__':
     game = Game()

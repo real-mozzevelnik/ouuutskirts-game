@@ -18,8 +18,13 @@ class Dialog(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_RETURN]:
-            self.sprite_to_kill.kill()
+            if not self.go_next:
+                self.sprite_to_kill.kill()
             self.kill()
+            if self.go_next:
+                self.go_to_next_level()
+            self.stat.dialog_num += 1
+
 
     def text(self):
         start_y = (SCREEN_HEIGHT*2)/3 + 5
@@ -40,8 +45,3 @@ class Dialog(pygame.sprite.Sprite):
     def update(self):
         self.input()
         self.text()
-
-    def __del__(self):
-        self.stat.dialog_num += 1
-        if self.go_next:
-            self.go_to_next_level()
