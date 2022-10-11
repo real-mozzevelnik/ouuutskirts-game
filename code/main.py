@@ -12,6 +12,7 @@ class Stat():
     def __init__(self):
         self.stat_now = 'run'
         self.level_num = 'level_1'
+        self.dialog_num = 1
 
 class Game:
     def __init__(self):
@@ -24,17 +25,18 @@ class Game:
     def check_stat(self):
         if self.stat.stat_now == 'run':
             self.level.run()
-        if self.stat.stat_now == 'death':
+        elif self.stat.stat_now == 'death':
             self.level = None
             self.level = Level(screen, self.stat)
+            self.stat.dialog_num = 1
             self.stat.stat_now = 'death_screen'
-        if self.stat.stat_now == 'death_screen':
+        elif self.stat.stat_now == 'death_screen':
             self.death_screen.run()
-        if self.stat.stat_now == 'new_level':
+        elif self.stat.stat_now == 'new_level':
             self.level = None
             self.level = Level(screen, self.stat)
             self.stat.stat_now = 'show_next_level'
-        if self.stat.stat_now == 'show_next_level':
+        elif self.stat.stat_now == 'show_next_level':
             self.show_next_level.run()
 
 
@@ -49,7 +51,7 @@ class Game:
             self.check_stat()
             pygame.display.update()
             self.clock.tick(60)
-            # print(self.stat.stat_now)
+            # print(self.stat.dialog_num)
 
 if __name__=='__main__':
     game = Game()

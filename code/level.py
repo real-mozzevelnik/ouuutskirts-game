@@ -12,6 +12,7 @@ from file_path import res
 from heart import Heart
 from dialog import Dialog
 from coin import Coin
+from next_level_mate import Next_level_mate
 
 class Level:
     def __init__(self, display_surface, stat):
@@ -31,8 +32,9 @@ class Level:
         self.coins = pygame.sprite.Group()
         self.boxes = pygame.sprite.Group()
         self.hearts = pygame.sprite.Group()
+        self.dialogs = pygame.sprite.Group()
+        self.next_level_mate = None
         self.dialog = pygame.sprite.GroupSingle()
-        self.dialog_place = pygame.sprite.GroupSingle()
         self.coins_score = 0
         self.paused = False
 
@@ -96,42 +98,42 @@ class Level:
                             tile = Tile((x,y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
-                        if style == 'box':
+                        elif style == 'box':
                             y += 25
                             tile = Tile((x,y), self.display_surface, box_image, 'box')
                             self.obstacle_sprites.add(tile)
                             self.visible_sprites.add(tile)
                             self.boxes.add(tile)
-                        if style == 'door':
+                        elif style == 'door':
                             y += 21
                             self.door = Tile((x,y), self.display_surface, door_image[0], 'door')
                             self.visible_sprites.add(self.door)
-                        if style == 'coins':
+                        elif style == 'coins':
                             tile = Coin((x,y),self.display_surface)
                             self.visible_sprites.add(tile)
                             self.coins.add(tile)
-                        if style == 'enemies':
+                        elif style == 'enemies':
                             enemy_type = random.choice(list(self.enemy_images.keys()))
                             enemy = Enemy((x,y), self.display_surface, self.enemy_images[enemy_type], enemy_type, self.visible_sprites)
                             self.enemies.add(enemy)
                             self.visible_sprites.add(enemy)
-                        if style == 'stoppers':
+                        elif style == 'stoppers':
                             tile = Tile((x, y), self.display_surface, stopper_image, 'stopper')
                             self.stoppers.add(tile)
                             self.visible_sprites.add(tile)
-                        if style == 'player':
+                        elif style == 'player':
                             player = Player((x,y),self.display_surface, self.create_attack, self.visible_sprites,
                                             self.play_ultra, self.destroy_boxes, self.stat)
                             self.player.add(player)
-                        if style == 'grass':
+                        elif style == 'grass':
                             tile = Tile((x,y), self.display_surface, grass_image, 'grass')
                             self.visible_sprites.add(tile)
                             self.grass.add(tile)
-                        if style == 'dialog':
+                        elif style == 'dialog':
                             tile = Tile((x,y), self.display_surface, stopper_image, 'dialog')
-                            self.dialog_place.add(tile)
+                            self.dialogs.add(tile)
                             self.visible_sprites.add(tile)
-                        if style == 'beauty':
+                        elif style == 'beauty':
                             tile = Tile((x, y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.visible_sprites.add(tile)
 
@@ -266,10 +268,14 @@ class Level:
                     player.health = 100
 
     def start_dialog(self):
-        if self.dialog_place.sprite:
-            if self.player.sprite.rect.x == self.dialog_place.sprite.rect.x:
-                dialog = Dialog(dialogs['level_1'], self.display_surface, self.dialog_place)
-                self.dialog.add(dialog)
+        # if self.dialog_place.sprite:
+        #     if self.player.sprite.rect.x == self.dialog_place.sprite.rect.x:
+        #         dialog = Dialog(dialogs['level_1'], self.display_surface, self.dialog_place)
+        #         self.dialog.add(dialog)
+        for sprite in self.dialogs:
+            if self.player.sprite.rect.x == sprite.rect.x:
+                sprite.kill()
+                self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, sprite, self.stat))
 
     def if_paused(self):
         if self.dialog.sprite:
@@ -277,10 +283,11 @@ class Level:
         else:
             self.paused = False
 
-    def collide_door(self):
-        if self.player.sprite.rect.x+35 == self.door.rect.x:
-            self.stat.level_num = self.stat.level_num[:-1] + str(int(self.stat.level_num[-1])+1)
-            self.stat.stat_now = 'new_level'
+    def collide_mate(self):
+        if self.next_level_mate:
+            if self.player.sprite.rect.x+35 == self.rect.x:
+                self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate, self.stat))
+
 
     def death(self):
         if self.player.sprite.health<=0 or self.player.sprite.rect.y>SCREEN_HEIGHT:
@@ -328,4 +335,4 @@ class Level:
             self.dialog.draw(self.display_surface)
             self.dialog.update()
 
-        self.collide_door()
+        self.collide_mate()
