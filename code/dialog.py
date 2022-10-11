@@ -33,6 +33,10 @@ class Dialog(pygame.sprite.Sprite):
         self.stat.level_num = self.stat.level_num[:-1] + str(int(self.stat.level_num[-1]) + 1)
         self.stat.stat_now = 'new_level'
 
+    # def update(self, shift_speed):
+    #     self.rect.x += shift_speed
+
+    # def update_if_active(self):
     def update(self):
         self.input()
         self.text()

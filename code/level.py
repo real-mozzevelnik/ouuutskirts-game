@@ -33,7 +33,7 @@ class Level:
         self.boxes = pygame.sprite.Group()
         self.hearts = pygame.sprite.Group()
         self.dialogs = pygame.sprite.Group()
-        self.next_level_mate = None
+        self.next_level_mate = pygame.sprite.GroupSingle()
         self.dialog = pygame.sprite.GroupSingle()
         self.coins_score = 0
         self.paused = False
@@ -65,7 +65,8 @@ class Level:
             'player': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/player.csv')),
             'grass': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/grass.csv')),
             'dialog': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/dialog.csv')),
-            'beauty':import_csv_layout(res(f'../level/{self.stat.level_num}_csv/beauty.csv')) if self.stat.level_num=='level_2' else [[-1]]}
+            'beauty': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/beauty.csv')) if self.stat.level_num=='level_2' else [[-1]],
+            'next_level_mate': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/next_level_mate.csv'))}
 
         coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
@@ -83,6 +84,10 @@ class Level:
             'ghost': import_folder(res('../graphics/enemies/ghost')),
             'lich': import_folder(res('../graphics/enemies/lich'))
         }
+
+        # mate
+        mate_image = pygame.image.load('../graphics/player/level_2/running/0.png').convert_alpha()
+        mate_image = pygame.transform.flip(mate_image, True, False)
 
         # background
         background = Tile((0,0),self.display_surface, background_image, 'background')
@@ -130,12 +135,17 @@ class Level:
                             self.visible_sprites.add(tile)
                             self.grass.add(tile)
                         elif style == 'dialog':
-                            tile = Tile((x,y), self.display_surface, stopper_image, 'dialog')
+                            tile = Tile((x,y), self.display_surface, box_image, 'dialog')
                             self.dialogs.add(tile)
                             self.visible_sprites.add(tile)
                         elif style == 'beauty':
                             tile = Tile((x, y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.visible_sprites.add(tile)
+                        elif style == 'next_level_mate':
+                            # self.next_level_mate = Next_level_mate(self.stat, (x,y))
+                            tile = Tile((x,y), self.display_surface, mate_image, 'mate' )
+                            self.visible_sprites.add(tile)
+                            self.next_level_mate.add(tile)
 
     # I hate this method, that's insane
     def horizontal_movement_collision(self):
@@ -272,8 +282,8 @@ class Level:
         #     if self.player.sprite.rect.x == self.dialog_place.sprite.rect.x:
         #         dialog = Dialog(dialogs['level_1'], self.display_surface, self.dialog_place)
         #         self.dialog.add(dialog)
-        for sprite in self.dialogs:
-            if self.player.sprite.rect.x == sprite.rect.x:
+        for sprite in self.dialogs.sprites():
+            if abs(self.player.sprite.rect.x - sprite.rect.x) < 10:
                 sprite.kill()
                 self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, sprite, self.stat))
 
@@ -284,9 +294,8 @@ class Level:
             self.paused = False
 
     def collide_mate(self):
-        if self.next_level_mate:
-            if self.player.sprite.rect.x+35 == self.rect.x:
-                self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate, self.stat))
+        if abs(self.player.sprite.rect.x - self.next_level_mate.sprite.rect.x) < 20:
+            self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate, self.stat, go_next=True))
 
 
     def death(self):
@@ -299,6 +308,7 @@ class Level:
         self.visible_sprites.draw(self.display_surface)
         if not self.paused:
             self.visible_sprites.update(self.shift_speed)
+            # self.dialogs.update(self.shift_speed)
 
         self.shift_x()
 
@@ -331,8 +341,9 @@ class Level:
         self.add_hearts()
         self.start_dialog()
         self.if_paused()
-        if self.dialog:
+        if self.dialog.sprite:
             self.dialog.draw(self.display_surface)
             self.dialog.update()
 
         self.collide_mate()
+        # self.next_level_mate.update(self.shift_speed)
