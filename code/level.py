@@ -85,7 +85,7 @@ class Level:
         }
 
         # mate
-        mate_image = pygame.image.load('../graphics/player/level_2/running/0.png').convert_alpha()
+        mate_image = pygame.image.load(res('../graphics/player/level_2/running/0.png')).convert_alpha()
         mate_image = pygame.transform.flip(mate_image, True, False)
 
         # background
