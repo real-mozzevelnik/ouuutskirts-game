@@ -67,7 +67,6 @@ class Level:
             'beauty': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/beauty.csv')) if self.stat.level_num=='level_2' else [[-1]],
             'next_level_mate': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/next_level_mate.csv'))}
 
-        coin_image = pygame.image.load(res('../graphics/tiles/coin.png')).convert_alpha()
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
         obstacles = import_cut_graphics(res(f'../graphics/tiles/terrain_tiles/{self.stat.level_num}.png'))
         door_image = import_cut_graphics(res('../graphics/tiles/door.png'), 46)
@@ -85,7 +84,7 @@ class Level:
         }
 
         # mate
-        mate_image = pygame.image.load(res('../graphics/player/level_2/running/0.png')).convert_alpha()
+        mate_image = pygame.image.load(res(f'../graphics/mate/{self.stat.level_num}.png')).convert_alpha()
         mate_image = pygame.transform.flip(mate_image, True, False)
 
         # background
