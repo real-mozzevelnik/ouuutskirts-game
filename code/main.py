@@ -12,7 +12,7 @@ pygame.display.set_caption('ouuutskirts')
 class Stat():
     def __init__(self):
         self.stat_now = 'run'
-        self.level_num = 'level_4'
+        self.level_num = 'level_1'
         self.dialog_num = 1
         self.dialog_num_after_death = 1
 
