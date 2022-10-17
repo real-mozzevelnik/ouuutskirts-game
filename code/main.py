@@ -3,6 +3,7 @@ from settings import *
 from level import Level
 from death_screen import Death_screen
 from show_next_level import Show_next_level
+from boss import Boss
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
@@ -11,7 +12,7 @@ pygame.display.set_caption('ouuutskirts')
 class Stat():
     def __init__(self):
         self.stat_now = 'run'
-        self.level_num = 'level_1'
+        self.level_num = 'level_4'
         self.dialog_num = 1
         self.dialog_num_after_death = 1
 
@@ -35,11 +36,16 @@ class Game:
             self.death_screen.run()
         elif self.stat.stat_now == 'new_level':
             self.level = None
-            self.level = Level(screen, self.stat)
+            if self.stat.level_num == 'level_5':
+                self.boss = Boss(screen)
+            else:
+                self.level = Level(screen, self.stat)
             self.stat.stat_now = 'show_next_level'
             self.stat.dialog_num_after_death = self.stat.dialog_num
         elif self.stat.stat_now == 'show_next_level':
             self.show_next_level.run()
+        elif self.stat.stat_now == 'boss':
+            self.boss.run()
 
 
     def run(self):

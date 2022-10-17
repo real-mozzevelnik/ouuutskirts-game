@@ -72,10 +72,9 @@ class Level:
         door_image = import_cut_graphics(res('../graphics/tiles/door.png'), 46)
         stopper_image = pygame.image.load(res('../graphics/stopper.png')).convert_alpha()
         background_image = pygame.image.load(res(f'../graphics/background/{self.stat.level_num}.png')).convert_alpha()
-        if self.stat.level_num == 'level_1':
-            grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))[0]
-        else:
-            grass_image = stopper_image
+        grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))[0]
+        if self.stat.level_num != 'level_1':
+            grass_image.set_alpha(0)
 
         # enemies
         self.enemy_images = {
@@ -86,6 +85,8 @@ class Level:
         # mate
         mate_image = pygame.image.load(res(f'../graphics/mate/{self.stat.level_num}.png')).convert_alpha()
         mate_image = pygame.transform.flip(mate_image, True, False)
+        if self.stat.level_num == 'level_4':
+            mate_image.set_alpha(0)
 
         # background
         background = Tile((0,0),self.display_surface, background_image, 'background')
