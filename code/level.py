@@ -343,4 +343,3 @@ class Level:
             self.dialog.update()
 
         self.collide_mate()
-        # self.next_level_mate.update(self.shift_speed)
