@@ -3,12 +3,14 @@ from settings import TILESIZE
 from tile import Tile
 from support import import_csv_layout, import_cut_graphics
 from file_path import res
+from support import print_text
 
 class Boss:
     def __init__(self, screen):
         self.display_surface = screen
         self.create_map()
         pygame.mouse.set_visible(False)
+        self.check_collides = True
 
     def create_map(self):
         layouts = {
@@ -24,6 +26,8 @@ class Boss:
         player = pygame.image.load(res('../graphics/boss_player.png')).convert_alpha()
         self.visible_sprites = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
+        self.screamer_image = pygame.image.load(res('../graphics/screamer.jpg')).convert_alpha()
+        self.screamer_image = pygame.transform.scale(self.screamer_image, (1200,704))
 
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
@@ -64,12 +68,17 @@ class Boss:
             self.run_screamer()
 
     def run_screamer(self):
-        pass
+        self.check_collides = False
+        pygame.mouse.set_visible(True)
+        self.display_surface.blit(self.screamer_image, (0,0))
+        print_text((270,100), 'Марго остался без пива', 60, self.display_surface)
 
     def run(self):
         self.visible_sprites.draw(self.display_surface)
         self.visible_sprites.update(0)
-        self.move()
-        self.collide()
+        if self.check_collides:
+            self.move()
+            self.collide()
         self.collide_screamer()
+
 
