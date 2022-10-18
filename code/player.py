@@ -9,6 +9,14 @@ class Player(pygame.sprite.Sprite):
         self.pos = pos
         self.display_surface = display_surface
 
+        # sounds
+        self.weapon_attack_sound = pygame.mixer.Sound(res('../sounds/attack.wav'))
+        self.weapon_attack_sound.set_volume(0.5)
+        self.jump_sound = pygame.mixer.Sound('../sounds/jump.wav')
+        self.jump_sound.set_volume(0.5)
+        self.fire_sound = pygame.mixer.Sound(res('../sounds/fire.wav'))
+        self.fire_sound.set_volume(0.5)
+
         # player stats
         self.speed = 5
         self.side = None
@@ -78,8 +86,10 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_SPACE] and (self.on_ground or self.on_wall):
             self.jump()
+            self.jump_sound.play()
 
         elif keys[pygame.K_c] and self.can_attack:
+            self.weapon_attack_sound.play()
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
             self.destroy_boxes()
@@ -95,6 +105,7 @@ class Player(pygame.sprite.Sprite):
             if self.ultra == self.ultra_max:
                 self.play_ultra()
                 self.ultra = 0
+                self.fire_sound.play()
 
     def gravity(self):
         self.direction.y += self.gravity_speed

@@ -49,6 +49,14 @@ class Level:
         self.animation_speed = 0.15
         self.animation_player = AnimationPlayer()
 
+        # sounds
+        self.coin_sound = pygame.mixer.Sound(res('../sounds/Coin.wav'))
+        self.coin_sound.set_volume(0.5)
+        self.death_sound = pygame.mixer.Sound(res('../sounds/gameover.wav'))
+        self.death_sound.set_volume(1)
+        self.enemy_attack_sound = pygame.mixer.Sound(res('../sounds/attack.wav'))
+        self.enemy_attack_sound.set_volume(0.5)
+
         # ui
         self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
         self.ui.add(self.ui_menu)
@@ -141,7 +149,6 @@ class Level:
                             tile = Tile((x, y), self.display_surface, obstacles[int(col)], 'terrain')
                             self.visible_sprites.add(tile)
                         elif style == 'next_level_mate':
-                            # self.next_level_mate = Next_level_mate(self.stat, (x,y))
                             tile = Tile((x,y), self.display_surface, mate_image, 'mate' )
                             self.visible_sprites.add(tile)
                             self.next_level_mate.add(tile)
@@ -210,8 +217,10 @@ class Level:
             if pygame.sprite.spritecollideany(enemy, self.stoppers):
                 if enemy.speed > 0:
                     enemy.side = 'left'
+                    enemy.rect.x -= 5
                 else:
                     enemy.side = 'right'
+                    enemy.rect.x += 5
                 enemy.speed = -enemy.speed
 
     def damage_player(self):
@@ -221,6 +230,7 @@ class Level:
             player.attacked_time = pygame.time.get_ticks()
             player.health -= 15
             self.animation_player.create_particles('slash', (player.rect.centerx, player.rect.centery),self.visible_sprites)
+            self.enemy_attack_sound.play()
 
     def create_attack(self):
         for enemy in self.enemies:
@@ -236,6 +246,7 @@ class Level:
             if 0 <= self.player.sprite.rect.x - box.rect.x <= 150 and -64 <= self.player.sprite.rect.y - box.rect.y <= 64 \
                     and self.player.sprite.side == 'left' or -150 <= self.player.sprite.rect.x - box.rect.x <= 0 \
                     and -64 <= self.player.sprite.rect.y - box.rect.y <= 64 and self.player.sprite.side == 'right':
+                self.animation_player.create_particles('box', (box.rect.centerx, box.rect.centery),self.visible_sprites)
                 box.kill()
                 heart = Heart((box.rect.x,box.rect.y), self.display_surface)
                 self.hearts.add(heart)
@@ -258,6 +269,7 @@ class Level:
             if coin.rect.colliderect(player.rect):
                 self.coins_score += 1
                 coin.kill()
+                self.coin_sound.play()
                 if player.ultra<player.ultra_max:
                     player.ultra+=1
 
@@ -299,6 +311,7 @@ class Level:
 
     def death(self):
         if self.player.sprite.health<=0 or self.player.sprite.rect.y>SCREEN_HEIGHT:
+            self.death_sound.play()
             self.stat.stat_now = 'death'
 
     def run(self):
