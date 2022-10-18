@@ -11,9 +11,9 @@ class Player(pygame.sprite.Sprite):
 
         # sounds
         self.weapon_attack_sound = pygame.mixer.Sound(res('../sounds/attack.wav'))
-        self.weapon_attack_sound.set_volume(0.5)
-        self.jump_sound = pygame.mixer.Sound('../sounds/jump.wav')
-        self.jump_sound.set_volume(0.5)
+        self.weapon_attack_sound.set_volume(0.1)
+        self.jump_sound = pygame.mixer.Sound(res('../sounds/jump.wav'))
+        self.jump_sound.set_volume(0.1)
         self.fire_sound = pygame.mixer.Sound(res('../sounds/fire.wav'))
         self.fire_sound.set_volume(0.5)
 

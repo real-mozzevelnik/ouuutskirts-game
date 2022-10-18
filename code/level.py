@@ -51,11 +51,14 @@ class Level:
 
         # sounds
         self.coin_sound = pygame.mixer.Sound(res('../sounds/Coin.wav'))
-        self.coin_sound.set_volume(0.5)
-        self.death_sound = pygame.mixer.Sound(res('../sounds/gameover.wav'))
+        self.coin_sound.set_volume(0.2)
+        self.death_sound = pygame.mixer.Sound(res('../sounds/death.wav'))
         self.death_sound.set_volume(1)
-        self.enemy_attack_sound = pygame.mixer.Sound(res('../sounds/attack.wav'))
+        self.enemy_attack_sound = pygame.mixer.Sound(res('../sounds/enemy_attack.wav'))
         self.enemy_attack_sound.set_volume(0.5)
+        self.main_sound = pygame.mixer.Sound(res(f'../sounds/{self.stat.level_num}.ogg'))
+        self.main_sound.set_volume(0.2)
+        self.main_sound.play(loops=-1)
 
         # ui
         self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
@@ -289,10 +292,6 @@ class Level:
                     player.health = 100
 
     def start_dialog(self):
-        # if self.dialog_place.sprite:
-        #     if self.player.sprite.rect.x == self.dialog_place.sprite.rect.x:
-        #         dialog = Dialog(dialogs['level_1'], self.display_surface, self.dialog_place)
-        #         self.dialog.add(dialog)
         for sprite in self.dialogs.sprites():
             if abs(self.player.sprite.rect.x - sprite.rect.x) < 10:
                 sprite.kill()
@@ -306,11 +305,12 @@ class Level:
 
     def collide_mate(self):
         if abs(self.player.sprite.rect.x - self.next_level_mate.sprite.rect.x) < 64:
-            self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate.sprite, self.stat, go_next=True))
+            self.dialog.add(Dialog(dialogs[self.stat.dialog_num], self.display_surface, self.next_level_mate.sprite, self.stat, go_next=True, main_sound=self.main_sound))
 
 
     def death(self):
         if self.player.sprite.health<=0 or self.player.sprite.rect.y>SCREEN_HEIGHT:
+            self.main_sound.stop()
             self.death_sound.play()
             self.stat.stat_now = 'death'
 

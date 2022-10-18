@@ -1,5 +1,6 @@
 import pygame
 from support import print_text
+from file_path import res
 
 class Show_next_level():
     def __init__(self, display_surface, stat):

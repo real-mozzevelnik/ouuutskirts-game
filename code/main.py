@@ -11,6 +11,8 @@ pygame.mixer.pre_init(44100, -16, 2, 1024)
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('ouuutskirts')
+ico = pygame.image.load(res('../graphics/main_icon.png'))
+pygame.display.set_icon(ico)
 
 class Stat():
     def __init__(self):
@@ -26,9 +28,7 @@ class Game:
         self.death_screen = Death_screen(screen, self.stat)
         self.show_next_level = Show_next_level(screen, self.stat)
         self.clock = pygame.time.Clock()
-        self.main_sound = pygame.mixer.Sound(res('../sounds/main.ogg'))
-        self.main_sound.set_volume(0.5)
-        self.main_sound.play(loops=-1)
+        self.mate_sound = pygame.mixer.Sound(res('../sounds/mate.wav'))
 
     def check_stat(self):
         if self.stat.stat_now == 'run':
@@ -42,6 +42,7 @@ class Game:
             self.death_screen.run()
         elif self.stat.stat_now == 'new_level':
             self.level = None
+            self.mate_sound.play()
             if self.stat.level_num == 'level_5':
                 self.boss = Boss(screen)
             else:

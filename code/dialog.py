@@ -3,10 +3,11 @@ from settings import *
 from support import print_text
 
 class Dialog(pygame.sprite.Sprite):
-    def __init__(self, text, display_surface, sprite_to_kill, stat, go_next=False):
+    def __init__(self, text, display_surface, sprite_to_kill, stat, go_next=False, main_sound = None):
         super().__init__()
         self.texts = text
         self.stat = stat
+        self.main_sound = main_sound
         self.go_next = go_next
         self.display_surface = display_surface
         self.sprite_to_kill = sprite_to_kill
@@ -22,6 +23,7 @@ class Dialog(pygame.sprite.Sprite):
                 self.sprite_to_kill.kill()
             self.kill()
             if self.go_next:
+                self.main_sound.stop()
                 self.go_to_next_level()
             self.stat.dialog_num += 1
 

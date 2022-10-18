@@ -8,6 +8,11 @@ from support import print_text
 class Boss:
     def __init__(self, screen):
         self.display_surface = screen
+        self.main_sound = pygame.mixer.Sound(res('../sounds/level_5.ogg'))
+        self.main_sound.set_volume(0.2)
+        self.main_sound.play(loops=-1)
+        self.jumpscare = pygame.mixer.Sound(res('../sounds/jumpscare_sound.mp3'))
+        self.jumpscare.set_volume(100)
         self.create_map()
         pygame.mouse.set_visible(False)
         self.check_collides = True
@@ -70,6 +75,10 @@ class Boss:
     def run_screamer(self):
         self.check_collides = False
         pygame.mouse.set_visible(True)
+        self.main_sound.stop()
+        if self.jumpscare:
+            self.jumpscare.play()
+            self.jumpscare = None
         self.display_surface.blit(self.screamer_image, (0,0))
         print_text((270,100), 'Марго остался без пива', 60, self.display_surface)
 
