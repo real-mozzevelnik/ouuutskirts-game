@@ -15,12 +15,22 @@ from coin import Coin
 
 class Level:
     def __init__(self, display_surface, stat):
+        # basics
         self.display_surface = display_surface
-
-        # stats
         self.stat = stat
 
-        # sprites
+        # sounds
+        self.coin_sound = pygame.mixer.Sound(res('../sounds/Coin.wav'))
+        self.coin_sound.set_volume(0.2)
+        self.death_sound = pygame.mixer.Sound(res('../sounds/death.wav'))
+        self.death_sound.set_volume(1)
+        self.enemy_attack_sound = pygame.mixer.Sound(res('../sounds/enemy_attack.wav'))
+        self.enemy_attack_sound.set_volume(0.5)
+        self.main_sound = pygame.mixer.Sound(res(f'../sounds/{self.stat.level_num}.ogg'))
+        self.main_sound.set_volume(0.2)
+        self.main_sound.play(loops=-1)
+
+        # sprite groups
         self.obstacle_sprites = pygame.sprite.Group()
         self.visible_sprites = pygame.sprite.Group()
         self.stoppers = pygame.sprite.Group()
@@ -37,8 +47,8 @@ class Level:
         self.coins_score = 0
         self.paused = False
 
+        # creating the map
         self.create_map()
-        self.shift_speed = 0
 
         # weapon
         weapon = Weapon(self.player.sprite, self.stat)
@@ -48,23 +58,14 @@ class Level:
         # animations
         self.animation_speed = 0.15
         self.animation_player = AnimationPlayer()
-
-        # sounds
-        self.coin_sound = pygame.mixer.Sound(res('../sounds/Coin.wav'))
-        self.coin_sound.set_volume(0.2)
-        self.death_sound = pygame.mixer.Sound(res('../sounds/death.wav'))
-        self.death_sound.set_volume(1)
-        self.enemy_attack_sound = pygame.mixer.Sound(res('../sounds/enemy_attack.wav'))
-        self.enemy_attack_sound.set_volume(0.5)
-        self.main_sound = pygame.mixer.Sound(res(f'../sounds/{self.stat.level_num}.ogg'))
-        self.main_sound.set_volume(0.2)
-        self.main_sound.play(loops=-1)
+        self.shift_speed = 0
 
         # ui
         self.ui_menu = UI(self.player.sprite.health, self.display_surface, self.player.sprite)
         self.ui.add(self.ui_menu)
 
     def create_map(self):
+        # importing csv to build the map from it
         layouts = {
             'terrain': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/terrain.csv')),
             'box': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/box.csv')),
@@ -78,31 +79,30 @@ class Level:
             'beauty': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/beauty.csv')) if self.stat.level_num=='level_2' else [[-1]],
             'next_level_mate': import_csv_layout(res(f'../level/{self.stat.level_num}_csv/next_level_mate.csv'))}
 
+        # importing all the graphics
         box_image = pygame.image.load(res('../graphics/tiles/crate.png')).convert_alpha()
         obstacles = import_cut_graphics(res(f'../graphics/tiles/terrain_tiles/{self.stat.level_num}.png'))
         door_image = import_cut_graphics(res('../graphics/tiles/door.png'), 46)
         stopper_image = pygame.image.load(res('../graphics/stopper.png')).convert_alpha()
         background_image = pygame.image.load(res(f'../graphics/background/{self.stat.level_num}.png')).convert_alpha()
         grass_image = import_cut_graphics(res('../graphics/tiles/grass.png'))[0]
+        background = Tile((0, 0), self.display_surface, background_image, 'background')
+        self.visible_sprites.add(background)
+        mate_image = pygame.image.load(res(f'../graphics/mate/{self.stat.level_num}.png')).convert_alpha()
+        mate_image = pygame.transform.flip(mate_image, True, False)
+        self.enemy_images = {
+            'ghost': import_folder(res('../graphics/enemies/ghost')),
+            'lich': import_folder(res('../graphics/enemies/lich'))}
+
+        # visible grass in needed in first level only, grass sprites depend on wall climbing in all levels
         if self.stat.level_num != 'level_1':
             grass_image.set_alpha(0)
 
-        # enemies
-        self.enemy_images = {
-            'ghost': import_folder(res('../graphics/enemies/ghost')),
-            'lich': import_folder(res('../graphics/enemies/lich'))
-        }
-
-        # mate
-        mate_image = pygame.image.load(res(f'../graphics/mate/{self.stat.level_num}.png')).convert_alpha()
-        mate_image = pygame.transform.flip(mate_image, True, False)
+        # there is no mate in level 5, but there is necessary functionality
         if self.stat.level_num == 'level_4':
             mate_image.set_alpha(0)
 
-        # background
-        background = Tile((0,0),self.display_surface, background_image, 'background')
-        self.visible_sprites.add(background)
-
+        # building the map from csv
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):

@@ -2,12 +2,11 @@ import pygame
 from math import sin
 from particles import AnimationPlayer
 from file_path import res
+from support import import_folder
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, display_surface, create_attack, visible_sprites, play_ultra, desrtoy_boxes, stat):
         super().__init__()
-        self.pos = pos
-        self.display_surface = display_surface
 
         # sounds
         self.weapon_attack_sound = pygame.mixer.Sound(res('../sounds/attack.wav'))
@@ -39,20 +38,18 @@ class Player(pygame.sprite.Sprite):
         self.running = False
         self.animation_player = AnimationPlayer()
 
-        self.player_running_animations = {
-            '0': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/0.png')).convert_alpha(),
-            '1': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/1.png')).convert_alpha(),
-            '2': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/2.png')).convert_alpha(),
-            '3': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/3.png')).convert_alpha(),
-            '4': pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/running/4.png')).convert_alpha()}
+        # importing animations
+        self.player_running_animations = import_folder(res(f'../graphics/player/{self.stat.level_num}/running'))
         self.player_on_wall_animation = pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/on_wall/0.png')).convert_alpha()
         self.player_jumping_animation = pygame.image.load(res(f'../graphics/player/{self.stat.level_num}/jump/0.png')).convert_alpha()
 
         # basic setup
-        self.image = self.player_running_animations['0']
+        self.display_surface = display_surface
+        self.image = self.player_running_animations[ 0]
         self.rect = self.image.get_rect(topleft = pos)
         self.direction = pygame.math.Vector2(0,0)
 
+        # methods imported from level class to connect it with another instances
         self.create_attack = create_attack
         self.visible_sprites = visible_sprites
         self.play_ultra = play_ultra
@@ -62,7 +59,6 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attack_cooldown = 400
         self.attack_time = 0
-
         self.can_be_attacked = True
         self.can_be_attacked_cooldown = 400
         self.attacked_time = 0
@@ -150,9 +146,9 @@ class Player(pygame.sprite.Sprite):
 
         elif not self.running and not self.on_wall and not self.in_air:
             if self.side == 'right':
-                self.image = self.player_running_animations['0']
+                self.image = self.player_running_animations[0]
             else:
-                self.image = self.player_running_animations['0']
+                self.image = self.player_running_animations[0]
                 self.image = pygame.transform.flip(self.image, True, False)
 
         if not self.can_be_attacked:
@@ -163,9 +159,9 @@ class Player(pygame.sprite.Sprite):
 
     def animate_run(self):
         if self.side == 'right':
-            self.image = self.player_running_animations[str(int(self.frame_index))]
+            self.image = self.player_running_animations[int(self.frame_index)]
         else:
-            self.image = self.player_running_animations[str(int(self.frame_index))]
+            self.image = self.player_running_animations[int(self.frame_index)]
             self.image = pygame.transform.flip(self.image, True, False)
         if self.frame_index >= 4.5:
             self.frame_index = 0
